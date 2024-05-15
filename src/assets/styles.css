@@ -1,0 +1,96 @@
+/* Colors */
+
+/*
+COLOR CODES:
+Red - #9c2135
+LightRed - #e9d1d5
+Blue - #282c97
+LightBlue - #dedffc
+Green - #006a44
+LightGreen - #c9dcd5
+*/
+
+:root {
+    --red: #9c2135;
+    --lightRed: #e9d1d5;
+    --blue: #282c97;
+    --lightBlue: #dedffc;
+    --green: #006a44;
+    --lightGreen: #c9dcd5;
+    --text: black;
+    --text-inverted: white;
+  
+    /* Fonts */
+    --font: sans-serif;
+  }
+  
+
+body {
+    margin: 0;
+}
+
+.page {
+    margin: 10px;
+    padding: 10px;
+}
+
+h1 {
+    font-size: 40px;
+    text-align: center;
+}
+
+.topnav {
+    background-color: var(--green);
+    overflow: hidden;
+    height: 110px;
+}
+
+.topnav a {
+    float: right;
+    color: var(--text-inverted);
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 25px;
+}
+
+.topnav a:hover {
+    background-color: var(--lightGreen);
+    color: var(--text);
+}
+
+.topnav a.active {
+    background-color: var(--lightGreen);
+    color: var(--text);
+}
+
+.topnavLinks {
+    float: left;
+    width: 50%;
+    height: 100%;
+}
+
+.nav-item {
+    margin-top: 5%;
+    margin-right: 5%;
+    border: 1px solid black;
+}
+
+.topnavLogo {
+    float: left;
+    width: 50%;
+}
+
+#Logo {
+    height: 100px;
+    width: 100px;
+    margin-left: 30px;
+}
+
+.footer {
+    background-color: var(--green);
+    min-height: 100px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
