@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>My Recipes</h2>
-    <div class="MyRecipesGrid">
+    <div class="RecipesGrid">
       <div v-for="recipe in recipes" :key="recipe.id" class="recipe-cell">
         <i :class="['fas', 'fa-globe', recipe.public ? 'public-icon' : 'private-icon']" id="globe_icon"
           @click="togglePublicStatus(recipe)"></i>
