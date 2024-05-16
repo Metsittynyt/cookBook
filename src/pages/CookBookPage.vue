@@ -3,10 +3,7 @@
     <h1>My cookbook</h1>
     <button @click="overlay_on">Add new recipe</button>
     <CreateOverlay />
-    <h2>My recipes</h2>
-    <div class="recipes">
-      
-    </div>
+    <MyRecipes />
     <h2>Saved recipes</h2>
     <div class="saved">
       
@@ -16,11 +13,13 @@
 
 <script>
 import CreateOverlay from '../components/CreateOverlay'
+import MyRecipes from '@/components/MyRecipes.vue';
 
 export default {
   name: 'CookBookPage',
   components: {
-    CreateOverlay
+    CreateOverlay,
+    MyRecipes
   },
   methods: {
     overlay_on() {
