@@ -3,7 +3,7 @@
     <div v-if="error">
       {{ error }}
     </div>
-    <form id="form" v-on:submit="handleSubmit" v-else>
+    <form id="form" @submit="handleSubmit" v-else>
       <div class="form-group">
         <label for="recipeName">Recipe Name:</label>
         <input type="text" id="recipeName" v-model="recipe.name" required>
@@ -20,7 +20,7 @@
         <label for="publicCheck">Publish?</label>
         <input type="checkbox" id="publicCheck" v-model="recipe.public">
       </div>
-      <button type="submit">Submit Recipe</button>
+      <button type="submit">{{ isEditing ? 'Update' : 'Submit' }} Recipe</button>
     </form>
   </div>
 </template>
@@ -29,32 +29,44 @@
 import axios from 'axios';
 
 export default {
-  data() {
-    return {
-      recipe: {
+  name: 'RecipeForm',
+  props: {
+    initialRecipe: {
+      type: Object,
+      default: () => ({
         name: '',
         ingredients: '',
         steps: '',
         public: false
-      }
+      })
+    }
+  },
+  data() {
+    return {
+      recipe: { ...this.initialRecipe },
+      error: null,
+      isEditing: this.initialRecipe && this.initialRecipe.id
     };
   },
-  name: 'RecipeForm',
   methods: {
-    handleSubmit: async function (e) {
+    async handleSubmit(e) {
       e.preventDefault();
 
       try {
-        const response = await axios.post('http://localhost:3001/recipes', this.recipe)
-        console.log(response);
+        if (this.isEditing) {
+          await axios.put(`http://localhost:3001/recipes/${this.recipe.id}`, this.recipe)
+        } else {
+          await axios.post('http://localhost:3001/recipes', this.recipe)
+        }
+        this.$emit('submit-success');
       } catch (error) {
         this.error = error;
       }
       this.resetForm();
-      document.querySelector(".overlay").style.display = "none";
     },
     resetForm() {
       this.recipe = { name: '', ingredients: '', steps: '', public: false };
+      this.error = null;
     }
   }
 }
