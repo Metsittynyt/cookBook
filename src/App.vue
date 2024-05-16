@@ -1,9 +1,7 @@
 <template>
-  <div>
     <TopNav />
     <router-view/>
     <BottomFooter />
-  </div>
 </template>
 
 <script>
