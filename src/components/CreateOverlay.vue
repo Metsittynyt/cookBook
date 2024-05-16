@@ -1,25 +1,36 @@
 <template>
-    <div class="overlay">
-        <div id="create_overlay">
-            <h1>Add new recipe</h1>
-            <button class="close_button" @click="overlay_off">x</button>
-            <RecipeForm />
-        </div>
+  <div class="overlay">
+    <div id="create_overlay">
+      <h1>{{ isEditing ? 'Edit Recipe' : 'Add New Recipe' }}</h1>
+      <button class="close_button" @click="overlay_off">x</button>
+      <RecipeForm :initialRecipe="initialRecipe" @submit-success="overlay_off" />
     </div>
+  </div>
 </template>
 
 <script>
 import RecipeForm from './RecipeForm'
 
 export default {
-    name: 'CreateOverlay',
-    components: {
-      RecipeForm
-    },
-    methods: {
+  name: 'CreateOverlay',
+  components: {
+    RecipeForm
+  },
+  props: {
+    initialRecipe: {
+      type: Object,
+      default: null // Allow null to represent adding a new recipe
+    }
+  },
+  computed: {
+    isEditing() {
+      return this.initialRecipe && this.initialRecipe.id; // Check if initialRecipe is not null and has an id
+    }
+  },
+  methods: {
     overlay_off() {
       console.log("overlay off")
-      document.querySelector(".overlay").style.display = "none";
+      this.$emit('close-overlay');
     }
   }
 }
