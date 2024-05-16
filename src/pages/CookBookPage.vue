@@ -11,7 +11,7 @@
 
 <script>
 import CreateOverlay from '../components/CreateOverlay'
-import MyRecipes from '@/components/MyRecipes.vue'
+import MyRecipes from '../components/MyRecipes'
 
 export default {
   name: 'CookBookPage',
