@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/recipes
+Content-Type: application/json
+
+{
+      "id": "1",
+      "name": "Leivos",
+      "ingredients": "1 kananmuna\n2dl sokeria\n2dl vehnäjauhoja",
+      "steps": "Sekoita aineet keskenään.\n Paista 200C asteessa.",
+      "public": true
+}

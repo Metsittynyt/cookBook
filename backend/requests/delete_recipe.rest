@@ -1,0 +1,1 @@
+DELETE http://localhost:3001/api/recipes/664749ad3160792d0b345ffd

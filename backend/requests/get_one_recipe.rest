@@ -1,0 +1,1 @@
+GET http://localhost:3001/api/recipes/66473b25bd0ac465c3fdea6b

@@ -1,0 +1,10 @@
+PUT http://localhost:3001/api/recipes/66473bcc2d0394d60260be1e
+Content-Type: application/json
+
+{
+      "id": "1",
+      "name": "Muffinssi",
+      "ingredients": "1 kananmuna\n2dl sokeria\n2dl vehnäjauhoja\n1tl leivinjauhetta",
+      "steps": "Sekoita aineet keskenään.\n Paista 150C asteessa.",
+      "public": true
+}
