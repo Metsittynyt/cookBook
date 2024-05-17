@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import recipeService from '@/services/recipes';
 import RecipeBox from '@/components/RecipeBox.vue';
 
 export default {
@@ -24,14 +24,24 @@ export default {
       error: null
     };
   },
-  async mounted() {
-    try {
-      const response = await axios.get('http://localhost:3001/recipes');
-      this.publicRecipes = response.data.filter(recipe => recipe.public);
-    } catch (error) {
-      this.error = 'Failed to fetch recipes';
-      console.error(error);
+  methods: {
+    async fetchPublicRecipes() {
+      try {
+        const response = await recipeService.getAll();
+        if (response && Array.isArray(response)) {
+          this.publicRecipes = response.filter(recipe => recipe.public);
+        } else {
+          this.error = 'Unexpected response format';
+        }
+        console.log("Home page: ", this.publicRecipes);
+      } catch (error) {
+        this.error = 'Failed to fetch recipes';
+        console.error(error);
+      }
     }
+  },
+  async mounted() {
+    await this.fetchPublicRecipes();
   }
 };
 </script>

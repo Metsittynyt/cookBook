@@ -2,8 +2,13 @@
   <div class="page">
     <h1>My cookbook</h1>
     <button @click="add_recipe">Add new recipe</button>
-    <CreateOverlay v-if="showOverlay" :initialRecipe="selectedRecipe" @close-overlay="closeOverlay" @submit-success="closeOverlay" />
-    <MyRecipes @edit-recipe="edit_recipe" />
+    <CreateOverlay 
+      v-if="showOverlay" 
+      :initialRecipe="selectedRecipe" 
+      @close-overlay="closeOverlay" 
+      @submit-success="handleSuccess" 
+    />
+    <MyRecipes :recipes="recipes" @edit-recipe="edit_recipe" @change="fetchRecipes"/>
     <h2>Saved recipes</h2>
     <div class="saved"></div>
   </div>
@@ -12,6 +17,7 @@
 <script>
 import CreateOverlay from '../components/CreateOverlay'
 import MyRecipes from '../components/MyRecipes'
+import recipeService from '@/services/recipes'
 
 export default {
   name: 'CookBookPage',
@@ -22,13 +28,26 @@ export default {
   data() {
     return {
       showOverlay: false,
-      selectedRecipe: null
+      selectedRecipe: null,
+      recipes: []
     }
   },
   methods: {
+    async fetchRecipes() {
+      try {
+        this.recipes = await recipeService.getAll();
+      } catch (error) {
+        console.error('Failed to fetch recipes:', error);
+      }
+    },
     add_recipe() {
       console.log("Add new recipe...")
-      this.selectedRecipe = null;
+      this.selectedRecipe = {
+        name: '',
+        ingredients: '',
+        steps: '',
+        public: false
+      };
       this.showOverlay = true;
     },
     edit_recipe(recipe) {
@@ -37,9 +56,14 @@ export default {
     },
     closeOverlay() {
       this.showOverlay = false;
-      // You might also want to refresh the recipes list here
-      // this.$refs.myRecipes.loadRecipes();
+    },
+    handleSuccess() {
+      this.closeOverlay();
+      this.fetchRecipes(); // Fetch recipes after successful submit
     }
+  },
+  async mounted() {
+    await this.fetchRecipes();
   }
 }
 </script>

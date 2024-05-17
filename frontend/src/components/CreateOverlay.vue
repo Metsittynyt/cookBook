@@ -3,7 +3,7 @@
     <div id="create_overlay">
       <h1>{{ isEditing ? 'Edit Recipe' : 'Add New Recipe' }}</h1>
       <button class="close_button" @click="overlay_off">x</button>
-      <RecipeForm :initialRecipe="initialRecipe" @submit-success="overlay_off" />
+      <RecipeForm :initialRecipe="initialRecipe" @submit-success="$emit('submit-success')" />
     </div>
   </div>
 </template>

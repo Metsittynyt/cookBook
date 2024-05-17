@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import recipeService from '@/services/recipes';
 
 export default {
   name: 'RecipeForm',
@@ -45,7 +45,7 @@ export default {
     return {
       recipe: { ...this.initialRecipe },
       error: null,
-      isEditing: this.initialRecipe && this.initialRecipe.id
+      isEditing: !!this.initialRecipe && !!this.initialRecipe.id
     };
   },
   methods: {
@@ -54,20 +54,30 @@ export default {
 
       try {
         if (this.isEditing) {
-          await axios.put(`http://localhost:3001/recipes/${this.recipe.id}`, this.recipe)
+          await recipeService.update(this.recipe.id, this.recipe);
         } else {
-          await axios.post('http://localhost:3001/recipes', this.recipe)
+          await recipeService.create(this.recipe);
         }
         this.$emit('submit-success');
+        this.resetForm();  // Reset the form after successful submission
       } catch (error) {
         this.error = error;
       }
-      this.resetForm();
     },
     resetForm() {
       this.recipe = { name: '', ingredients: '', steps: '', public: false };
       this.error = null;
+      this.isEditing = false;
+    }
+  },
+  watch: {
+    initialRecipe: {
+      immediate: true,
+      handler(newRecipe) {
+        this.recipe = { ...newRecipe };
+        this.isEditing = !!newRecipe && !!newRecipe.id;
+      }
     }
   }
-}
+};
 </script>

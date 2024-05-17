@@ -14,53 +14,56 @@
 </template>
 
 <script>
-import axios from 'axios'
-import RecipeBox from './RecipeBox'
+import recipeService from '@/services/recipes';
+import RecipeBox from './RecipeBox';
 
 export default {
   name: 'MyRecipes',
   components: {
     RecipeBox
   },
+  props: {
+    recipes: Array
+  },
   data() {
     return {
-      recipes: [],
       error: null
     }
   },
   methods: {
+    async fetchRecipes() {
+      try {
+        const recipes = await recipeService.getAll();
+        this.$emit('update:recipes', recipes);
+      } catch (error) {
+        this.error = 'Failed to fetch recipes';
+        console.error(error);
+      }
+    },
     async delete_recipe(recipeId) {
       try {
-        await axios.delete(`http://localhost:3001/recipes/${recipeId}`)
-        this.recipes = this.recipes.filter(recipe => recipe.id !== recipeId)
+        await recipeService.getRidOff(recipeId);
+        this.$emit('change'); // Emit change event to notify parent to refresh recipes
       } catch (error) {
-        console.error('Error deleting recipe:', error)
-        this.error = 'Failed to delete the recipe.'
+        console.error('Error deleting recipe:', error);
+        this.error = 'Failed to delete the recipe.';
       }
     },
     edit_recipe(recipe) {
-      console.log("Edit: " + recipe.name)
+      console.log("Edit: " + recipe.name);
       this.$emit('edit-recipe', recipe);
     },
     async togglePublicStatus(recipe) {
       try {
         recipe.public = !recipe.public; // Toggle the public status
-        await axios.put(`http://localhost:3001/recipes/${recipe.id}`, recipe); // Send update to backend
+        await recipeService.update(recipe.id, recipe); // Send update to backend
+        this.$emit('change'); // Emit change event to notify parent to refresh recipes
       } catch (error) {
         console.error('Error updating recipe:', error);
         this.error = 'Failed to update the recipe.';
         // Revert the change if the request fails
         recipe.public = !recipe.public;
       }
-    }
-  },
-  async mounted() {
-    try {
-      const response = await axios.get('http://localhost:3001/recipes')
-      this.recipes = response.data
-      console.log(response.data)
-    } catch (error) {
-      this.error = error;
     }
   }
 }
