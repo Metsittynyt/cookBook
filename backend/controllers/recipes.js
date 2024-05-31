@@ -1,5 +1,6 @@
 const recipesRouter = require('express').Router()
 const Recipe = require('../models/recipe')
+const mongoose = require('mongoose');
 
 
 // Get all
@@ -12,13 +13,19 @@ recipesRouter.get('/', (request, response) => {
 
 // Get one by id
 recipesRouter.get('/:id', async (request, response) => {
-    const recipe = await Recipe.findById(request.params.id)
-    if (recipe) {
-        response.json(recipe)
-    } else {
-        response.status(404).json(savedRecipe)
+    const { id } = request.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return response.status(400).json({ error: 'Invalid ID format' });
     }
-})
+
+    const recipe = await Recipe.findById(id);
+    if (recipe) {
+        response.json(recipe);
+    } else {
+        response.status(404).json({ error: 'Recipe not found' });
+    }
+});
 
 
 // Add new recipe
@@ -26,9 +33,7 @@ recipesRouter.post('/', async (request, response) => {
     const body = request.body
 
     if (!body.name || !body.ingredients || !body.steps) {
-        return response.status(400).json({
-            error: 'something is missing'
-        })
+        return response.status(400).json('Invalid data')
     }
 
     const recipe = new Recipe({
