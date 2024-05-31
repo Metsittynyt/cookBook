@@ -50,21 +50,24 @@ recipesRouter.post('/', (request, response, next) => {
 
 // Update recipe by id
 recipesRouter.put('/:id', (request, response, next) => {
-    const body = request.body
+    const body = request.body;
 
-    const recipe = new Recipe({
+    const updateData = {
         name: body.name,
         ingredients: body.ingredients,
         steps: body.steps,
         public: body.public || false
-    })
+    };
 
-    Recipe.findByIdAndUpdate(request.params.id, recipe, { new: true })
+    Recipe.findByIdAndUpdate(request.params.id, updateData, { new: true })
         .then(updatedRecipe => {
-            response.json(updatedRecipe)
+            if (!updatedRecipe) {
+                return response.status(404).send('Recipe not found');
+            }
+            response.json(updatedRecipe);
         })
-        .catch(error => next(error))
-})
+        .catch(error => next(error));
+});
 
 // Delete recipe by id
 recipesRouter.delete('/:id', (request, response, next) => {
