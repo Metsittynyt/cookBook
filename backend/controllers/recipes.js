@@ -43,7 +43,7 @@ recipesRouter.post('/', (request, response, next) => {
 
     recipe.save()
         .then(savedRecipe => {
-            response.json(savedRecipe)
+            response.status(201).json(savedRecipe)
         })
         .catch(error => next(error))
 })
