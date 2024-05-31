@@ -11,21 +11,18 @@ recipesRouter.get('/', (request, response) => {
 
 
 // Get one by id
-recipesRouter.get('/:id', (request, response, next) => {
-    Recipe.findById(request.params.id)
-        .then(recipe => {
-            if (recipe) {
-                response.json(recipe)
-            } else {
-                response.status(404).end()
-            }
-        })
-        .catch(error => next(error))
+recipesRouter.get('/:id', async (request, response) => {
+    const recipe = await Recipe.findById(request.params.id)
+    if (recipe) {
+        response.json(recipe)
+    } else {
+        response.status(404).json(savedRecipe)
+    }
 })
 
 
 // Add new recipe
-recipesRouter.post('/', (request, response, next) => {
+recipesRouter.post('/', async (request, response) => {
     const body = request.body
 
     if (!body.name || !body.ingredients || !body.steps) {
@@ -41,15 +38,13 @@ recipesRouter.post('/', (request, response, next) => {
         public: body.public || false
     })
 
-    recipe.save()
-        .then(savedRecipe => {
-            response.status(201).json(savedRecipe)
-        })
-        .catch(error => next(error))
+    const newRecipe = await recipe.save()
+    response.status(201).json(newRecipe)
 })
 
+
 // Update recipe by id
-recipesRouter.put('/:id', (request, response, next) => {
+recipesRouter.put('/:id', async (request, response) => {
     const body = request.body;
 
     const updateData = {
@@ -59,23 +54,19 @@ recipesRouter.put('/:id', (request, response, next) => {
         public: body.public || false
     };
 
-    Recipe.findByIdAndUpdate(request.params.id, updateData, { new: true })
-        .then(updatedRecipe => {
-            if (!updatedRecipe) {
-                return response.status(404).send('Recipe not found');
-            }
-            response.json(updatedRecipe);
-        })
-        .catch(error => next(error));
+    const updatedRecipe = await Recipe.findByIdAndUpdate(request.params.id, updateData, { new: true });
+
+    if (!updatedRecipe) {
+        return response.status(404).send('Recipe not found');
+    }
+
+    response.json(updatedRecipe);
 });
 
 // Delete recipe by id
-recipesRouter.delete('/:id', (request, response, next) => {
-    Recipe.findByIdAndDelete(request.params.id)
-        .then(() => {
-            response.status(204).end()
-        })
-        .catch(error => next(error))
+recipesRouter.delete('/:id', async (request, response) => {
+    await Recipe.findByIdAndDelete(request.params.id)
+    response.status(204).end()
 })
 
 module.exports = recipesRouter
