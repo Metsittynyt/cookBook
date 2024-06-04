@@ -1,4 +1,5 @@
 const Recipe = require('../models/recipe')
+const User = require('../models/user')
 
 const initialRecipes = [
   {
@@ -28,6 +29,11 @@ const recipesInDb = async () => {
   return recipes.map(recipe => recipe.toJSON())
 }
 
+const usersInDb = async () => {
+  const users = await User.find({})
+  return users.map(u => u.toJSON())
+}
+
 module.exports = {
-  initialRecipes, nonExistingId, recipesInDb
+  initialRecipes, nonExistingId, recipesInDb, usersInDb
 }
