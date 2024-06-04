@@ -1,13 +1,23 @@
+const jwt = require('jsonwebtoken')
 const recipesRouter = require('express').Router()
-const Recipe = require('../models/recipe')
 const mongoose = require('mongoose');
+const Recipe = require('../models/recipe')
+const User = require('../models/user')
 
+
+const getTokenFrom = request => {
+    const authorization = request.get('authorization')
+    if (authorization && authorization.startsWith('Bearer ')) {
+        return authorization.replace('Bearer ', '')
+    }
+    return null
+}
 
 // Get all
-recipesRouter.get('/', (request, response) => {
-    Recipe.find({}).then(recipes => {
-        response.json(recipes)
-    })
+recipesRouter.get('/', async (request, response) => {
+    const recipes = await Recipe
+        .find({}).populate('user', { username: 1, name: 1 })
+    response.json(recipes)
 })
 
 
@@ -32,6 +42,12 @@ recipesRouter.get('/:id', async (request, response) => {
 recipesRouter.post('/', async (request, response) => {
     const body = request.body
 
+    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    if (!decodedToken.id) {
+        return response.status(401).json({ error: 'token invalid' })
+    }
+    const user = await User.findById(decodedToken.id)
+
     if (!body.name || !body.ingredients || !body.steps) {
         return response.status(400).json('Invalid data')
     }
@@ -44,6 +60,9 @@ recipesRouter.post('/', async (request, response) => {
     })
 
     const newRecipe = await recipe.save()
+    user.recipes = user.recipes.concat(newRecipe._id)
+    await user.save()
+
     response.status(201).json(newRecipe)
 })
 
