@@ -5,7 +5,11 @@ const recipeSchema = new mongoose.Schema({
   name: String,
   ingredients: String,
   steps: String,
-  public: Boolean
+  public: Boolean,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 })
 
 recipeSchema.set('toJSON', {
