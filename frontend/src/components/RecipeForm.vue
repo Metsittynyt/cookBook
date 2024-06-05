@@ -56,7 +56,7 @@ export default {
         if (this.isEditing) {
           await recipeService.update(this.recipe.id, this.recipe);
         } else {
-          await recipeService.create(this.recipe);
+          await recipeService.create(this.recipe, localStorage.getItem("token"));
         }
         this.$emit('submit-success');
         this.resetForm();  // Reset the form after successful submission

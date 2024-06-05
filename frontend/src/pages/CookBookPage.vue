@@ -1,5 +1,5 @@
 <template>
-  <div class="page">
+  <div>
     <h1>My cookbook</h1>
     <button @click="add_recipe">Add new recipe</button>
     <CreateOverlay 
@@ -35,7 +35,7 @@ export default {
   methods: {
     async fetchRecipes() {
       try {
-        this.recipes = await recipeService.getAll();
+        this.recipes = await recipeService.getAll(localStorage.getItem("token"), true);
       } catch (error) {
         console.error('Failed to fetch recipes:', error);
       }

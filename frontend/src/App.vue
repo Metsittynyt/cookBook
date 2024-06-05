@@ -1,7 +1,9 @@
 <template>
   <TopNav />
   <PageBanner :bannerClass="bannerClass" />
-  <router-view />
+  <div class="page">
+    <router-view />
+  </div>
   <BottomFooter />
 </template>
 
