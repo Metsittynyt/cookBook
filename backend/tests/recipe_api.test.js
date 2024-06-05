@@ -53,19 +53,30 @@ describe('Viewing of specific recipe.', () => {
   })
 
   test('fails with status code 400 if id is invalid', async () => {
-    const invalidId = '6a3d6da78079881a82d3466'; 
-  
+    const invalidId = '6a3d6da78079881a82d3466';
+
     const response = await api
       .get(`/api/recipes/${invalidId}`)
       .expect(400)
       .expect('Content-Type', /application\/json/);
-  
+
     expect(response.body.error).toBe('Invalid ID format');
   });
 })
 
 
 describe('Addition of a new recipe', () => {
+  let token;
+
+  beforeEach(async () => {
+    const userCredentials = { username: 'mrTest', password: 'superSecretPassword' };
+    const response = await api
+      .post('/api/login')
+      .send(userCredentials);
+
+    token = response.body.token; // Assuming the login returns a token
+  });
+
   test('Succeeds with a valid data.', async () => {
     const newRecipe = {
       name: 'Muffinssi',
@@ -76,6 +87,7 @@ describe('Addition of a new recipe', () => {
 
     await api
       .post('/api/recipes')
+      .set('Authorization', `Bearer ${token}`)
       .send(newRecipe)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -89,18 +101,33 @@ describe('Addition of a new recipe', () => {
 
   test('Fails with statuscode 400 if data is invalid.', async () => {
     const newRecipe = {
-      name: 'Virheellinen',
+      name: 'invalid',
       public: false
     }
 
     await api
       .post('/api/recipes')
+      .set('Authorization', `Bearer ${token}`)
       .send(newRecipe)
       .expect(400)
 
     const response = await helper.recipesInDb()
     expect(response).toHaveLength(helper.initialRecipes.length)
   })
+
+  test('Fails with statuscode 401 if not authenticated.', async () => {
+    const newRecipe = {
+      name: 'Muffinssi',
+      ingredients: 'jtn, jtn',
+      steps: '1. sekoita, 2. paista',
+      public: false
+    };
+
+    await api
+      .post('/api/recipes')
+      .send(newRecipe)
+      .expect(400);
+  });
 })
 
 
