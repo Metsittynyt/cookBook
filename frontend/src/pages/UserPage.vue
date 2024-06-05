@@ -1,7 +1,9 @@
 <template>
   <div class="page">
-    <h1 v-if="!isLoggedIn">Log in</h1>
-    <LogInForm v-if="!isLoggedIn" />
+    <div v-if="!isLoggedIn">
+      <button @click="toggleMode">Switch to {{ isSignUp ? 'Log In' : 'Sign Up' }}</button>
+      <LogInForm :is-sign-up="isSignUp" />
+    </div>
 
     <div v-else>
       <h1>Logged in as {{ username }}</h1>
@@ -21,7 +23,8 @@ export default {
   },
   data() {
     return {
-      username: '' // This will store the username
+      username: '',
+      isSignUp: false
     }
   },
   computed: {
@@ -35,6 +38,9 @@ export default {
     this.username = localStorage.getItem('username') || 'User';
   },
   methods: {
+    toggleMode() {
+      this.isSignUp = !this.isSignUp;
+    },
     logout() {
       localStorage.removeItem('token');
       localStorage.removeItem('username'); // Clear the username from local storage
