@@ -56,7 +56,8 @@ recipesRouter.post('/', async (request, response) => {
         name: body.name,
         ingredients: body.ingredients,
         steps: body.steps,
-        public: body.public || false
+        public: body.public || false,
+        user: user._id
     })
 
     const newRecipe = await recipe.save()
