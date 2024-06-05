@@ -28,5 +28,14 @@ export default {
     background-color: var(--lightBlue);
 }
 
+.cookbook-banner {
+    /*background-image: url('');*/
+    background-color: var(--lightRed);
+}
 
+
+.user-banner {
+    /*background-image: url('');*/
+    background-color: var(--lightGreen);
+}
 </style>
