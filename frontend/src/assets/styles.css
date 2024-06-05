@@ -25,15 +25,16 @@ LightGreen - #c9dcd5
 }
 
 
-html, body, #app {
+html,
+body {
     margin: 0;
-    height: 100%;
+    min-height: 100vh;
 }
 
-body {
+#app {
     display: flex;
     flex-direction: column;
-    min-height: 100%;
+    min-height: 100vh;
 }
 
 .page {
@@ -61,7 +62,9 @@ button {
 .topnav {
     background-color: var(--green);
     overflow: hidden;
-    height: 110px;
+    height: 100px;
+    padding: 10px;
+    padding-right: 20px;
 }
 
 .topnav a {
@@ -72,23 +75,22 @@ button {
     font-size: 25px;
 }
 
-.topnav a:hover {
+.topnavLinks a:hover {
     background-color: var(--lightGreen);
     color: var(--text);
 }
 
-.topnav a.active {
+.topnavLinks a.active {
     background-color: var(--lightGreen);
     color: var(--text);
 }
 
 .topnavLinks {
-    display: grid;
-    grid-template-columns: auto auto auto;
-    grid-gap: 5px;
-    justify-content: space-evenly;
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    gap: 20px;
     align-content: center;
-    float: right;
     width: 60%;
     height: 100%;
 }
@@ -103,10 +105,10 @@ button {
     width: 40%;
 }
 
+
 #Logo {
     height: 100px;
     width: 100px;
-    margin-left: 30px;
 }
 
 footer {
@@ -143,7 +145,8 @@ footer {
     overflow-y: auto;
 }
 
-.close_button, #edit_icon {
+.close_button,
+#edit_icon {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -212,6 +215,31 @@ footer {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-#steps li, #ingredients li {
+#steps li,
+#ingredients li {
     text-align: left;
+}
+
+.error {
+    font-size: larger;
+    color: var(--red);
+    border: 1px solid var(--red);
+    padding: 5px;
+    background-color: var(--lightRed);
+    width: fit-content;
+    margin: auto;
+}
+
+.login_form {
+    width: fit-content;
+    margin: auto;
+    padding: 10px;
+}
+
+.login_form form {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 20px;
+    padding: 10px;
+    min-width: 250px;
 }
