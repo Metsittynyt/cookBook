@@ -5,6 +5,8 @@ const recipeSchema = new mongoose.Schema({
   name: String,
   ingredients: String,
   steps: String,
+  time: String,
+  difficulty: String,
   tags: [],
   public: Boolean,
   user: {
