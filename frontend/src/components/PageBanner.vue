@@ -48,7 +48,7 @@ export default {
 }
 
 .home-banner {
-    background-color: var(--lightBlue);
+    background-color: var(--lightGreen);
 }
 
 .cookbook-banner {
@@ -57,6 +57,6 @@ export default {
 
 
 .user-banner {
-    background-color: var(--lightGreen);
+    background-color: var(--lightBlue);
 }
 </style>
