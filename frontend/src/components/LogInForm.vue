@@ -218,7 +218,7 @@ export default {
     justify-content: center;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    background: lightgrey;
+    background: var(--lightBlue);
     gap: 20px;
     border-radius: 5px;
     border: 2px solid black;
