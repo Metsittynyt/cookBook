@@ -17,6 +17,16 @@
         <textarea id="steps" v-model="recipe.steps" required rows="7"></textarea>
       </div>
       <div class="form-group">
+        <label for="cookingTimeSlider">Cooking Time: {{ formattedCookingTime }}</label>
+        <input type="range" id="cookingTimeSlider" v-model="recipe.time" min="15" max="300" step="15"
+          @input="updateCookingTimeLabel">
+      </div>
+      <div class="form-group">
+        <label for="difficultySlider">Difficulty Level: {{ difficultyLabel }}</label>
+        <input type="range" id="difficultySlider" v-model="recipe.difficulty" min="1" max="4" step="1"
+          @input="updateDifficultyLabel">
+      </div>
+      <div class="form-group">
         <label>Tags</label>
         <div class="checkbox-container">
           <div class="checkbox-wrapper" v-for="(tag, index) in tags" :key="index">
@@ -46,6 +56,8 @@ export default {
         name: '',
         ingredients: '',
         steps: '',
+        time: '',
+        difficulty: '',
         tags: [],
         public: false
       })
@@ -58,7 +70,9 @@ export default {
       isEditing: !!this.initialRecipe && !!this.initialRecipe.id,
       tags: ['Sweet', 'Salty', 'Sour', 'Vegan', 'Vegetarian', 'Dairy',
         'Dairy-free', 'Lunch', 'Dinner', 'Snack', 'Dessert'],
-      selectedTags: []
+      selectedTags: [],
+      difficultyLabel: 'Easy',
+      formattedCookingTime: '30 mins'
     };
   },
   methods: {
@@ -66,6 +80,8 @@ export default {
       e.preventDefault();
 
       this.recipe.tags = this.selectedTags;
+      this.recipe.time = this.formattedCookingTime;
+      this.recipe.difficulty = this.difficultyLabel;
 
       try {
         if (this.isEditing) {
@@ -80,9 +96,28 @@ export default {
       }
     },
     resetForm() {
-      this.recipe = { name: '', ingredients: '', steps: '', tags: [], public: false };
+      this.recipe = { ...this.initialRecipe, tags: [], public: false };
+      this.selectedTags = [];
       this.error = null;
       this.isEditing = false;
+    },
+    updateCookingTimeLabel() {
+      const hours = Math.floor(this.recipe.cookingTime / 60);
+      const minutes = this.recipe.cookingTime % 60;
+      if (hours === 0) {
+        this.formattedCookingTime = `${minutes} mins`;
+      } else {
+        this.formattedCookingTime = `${hours} hr${hours > 1 ? 's' : ''} ${minutes} mins`;
+      }
+    },
+    updateDifficultyLabel() {
+      const levels = {
+        1: 'Easy',
+        2: 'Medium',
+        3: 'Difficult',
+        4: 'Expert'
+      };
+      this.difficultyLabel = levels[this.recipe.difficulty];
     }
   },
   watch: {
@@ -92,7 +127,13 @@ export default {
         this.recipe = { ...newRecipe };
         this.isEditing = !!newRecipe && !!newRecipe.id;
       }
+    },
+    'recipe.cookingTime': function () {
+      this.updateCookingTimeLabel();
     }
+  },
+  mounted() {
+    this.updateCookingTimeLabel();
   }
 };
 </script>
