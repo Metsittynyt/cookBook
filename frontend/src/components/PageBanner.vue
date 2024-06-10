@@ -25,9 +25,11 @@ export default {
     },
     computed: {
         formattedQuote() {
-            return this.quotes[this.bannerClass].replace(/\n/g, '<br>');
+            const quote = this.quotes[this.bannerClass] || 'Default quote';
+            return quote.replace(/\n/g, '<br>'); // This will now always have a valid string to operate on
         }
     }
+
 }
 </script>
 
