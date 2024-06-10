@@ -56,8 +56,8 @@ export default {
         name: '',
         ingredients: '',
         steps: '',
-        time: '',
-        difficulty: '',
+        time: 30,
+        difficulty: 1,
         tags: [],
         public: false
       })
@@ -67,12 +67,11 @@ export default {
     return {
       recipe: { ...this.initialRecipe },
       error: null,
-      isEditing: !!this.initialRecipe && !!this.initialRecipe.id,
-      tags: ['Sweet', 'Salty', 'Sour', 'Vegan', 'Vegetarian', 'Dairy',
-        'Dairy-free', 'Lunch', 'Dinner', 'Snack', 'Dessert'],
+      isEditing: !!this.initialRecipe.id,
+      tags: ['Sweet', 'Salty', 'Sour', 'Vegan', 'Vegetarian', 'Dairy', 'Dairy-free', 'Lunch', 'Dinner', 'Snack', 'Dessert'],
       selectedTags: [],
-      difficultyLabel: 'Easy',
-      formattedCookingTime: '30 mins'
+      difficultyLabel: '',
+      formattedCookingTime: ''
     };
   },
   methods: {
@@ -80,35 +79,30 @@ export default {
       e.preventDefault();
 
       this.recipe.tags = this.selectedTags;
-      this.recipe.time = this.formattedCookingTime;
-      this.recipe.difficulty = this.difficultyLabel;
 
       try {
-        if (this.isEditing) {
-          await recipeService.update(this.recipe.id, this.recipe);
-        } else {
-          await recipeService.create(this.recipe, localStorage.getItem("token"));
-        }
+        const action = this.isEditing ? recipeService.update(this.recipe.id, this.recipe) : recipeService.create(this.recipe);
+        const response = await action;
+        console.log('Submission successful:', response);
         this.$emit('submit-success');
-        this.resetForm();  // Reset the form after successful submission
+        this.resetForm();
       } catch (error) {
-        this.error = error;
+        console.error('Error submitting the recipe:', error);
+        this.error = 'Failed to submit the recipe. Please try again.';
       }
     },
     resetForm() {
-      this.recipe = { ...this.initialRecipe, tags: [], public: false };
+      this.recipe = { ...this.initialRecipe, tags: [], public: false, cookingTime: 30, difficulty: 1 };
       this.selectedTags = [];
       this.error = null;
       this.isEditing = false;
+      this.updateCookingTimeLabel();
+      this.updateDifficultyLabel();
     },
     updateCookingTimeLabel() {
-      const hours = Math.floor(this.recipe.cookingTime / 60);
-      const minutes = this.recipe.cookingTime % 60;
-      if (hours === 0) {
-        this.formattedCookingTime = `${minutes} mins`;
-      } else {
-        this.formattedCookingTime = `${hours} hr${hours > 1 ? 's' : ''} ${minutes} mins`;
-      }
+      const hours = Math.floor(this.recipe.time / 60);
+      const minutes = this.recipe.time % 60;
+      this.formattedCookingTime = hours > 0 ? `${hours} hr${hours > 1 ? 's' : ''} ${minutes} min` : `${minutes} min`;
     },
     updateDifficultyLabel() {
       const levels = {
@@ -117,23 +111,31 @@ export default {
         3: 'Difficult',
         4: 'Expert'
       };
-      this.difficultyLabel = levels[this.recipe.difficulty];
+      this.difficultyLabel = levels[this.recipe.difficulty] || 'Easy';
     }
   },
   watch: {
     initialRecipe: {
       immediate: true,
+      deep: true,
       handler(newRecipe) {
         this.recipe = { ...newRecipe };
-        this.isEditing = !!newRecipe && !!newRecipe.id;
+        this.isEditing = !!newRecipe.id;
+        this.selectedTags = newRecipe.tags ? [...newRecipe.tags] : [];
+        this.updateCookingTimeLabel();
+        this.updateDifficultyLabel();
       }
     },
     'recipe.cookingTime': function () {
       this.updateCookingTimeLabel();
+    },
+    'recipe.difficulty': function () {
+      this.updateDifficultyLabel();
     }
   },
   mounted() {
     this.updateCookingTimeLabel();
+    this.updateDifficultyLabel();
   }
 };
 </script>
