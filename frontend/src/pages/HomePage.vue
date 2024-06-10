@@ -1,8 +1,12 @@
 <template>
   <div>
     <h1>Recipes</h1>
+    <button id="empty" @click="emptyQuery">x</button>
+    <input type="text" v-model="searchQuery" placeholder="Search recipes..." class="search-input">
+    <button @click="performSearch">Search</button>
+    <p>{{ numOfRecipes }} recipes found.</p>
     <div class="RecipesGrid">
-      <div v-for="recipe in publicRecipes" :key="recipe.id" class="recipe-cell">
+      <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe-cell"> <!-- Use filteredRecipes here -->
         <RecipeBox :recipe="recipe" />
       </div>
     </div>
@@ -21,8 +25,23 @@ export default {
   data() {
     return {
       publicRecipes: [],
+      searchQuery: '',
+      activeSearchQuery: '',
       error: null
     };
+  },
+  computed: {
+    filteredRecipes() {
+      if (!this.activeSearchQuery) {
+        return this.publicRecipes;
+      }
+      return this.publicRecipes.filter(recipe => {
+        return recipe.name.toLowerCase().includes(this.searchQuery.toLowerCase());
+      });
+    },
+    numOfRecipes() {
+      return this.filteredRecipes.length;
+    }
   },
   methods: {
     async fetchPublicRecipes() {
@@ -33,11 +52,16 @@ export default {
         } else {
           this.error = 'Unexpected response format';
         }
-        console.log("Home page: ", this.publicRecipes);
       } catch (error) {
         this.error = 'Failed to fetch recipes';
         console.error(error);
       }
+    },
+    performSearch() {
+      this.activeSearchQuery = this.searchQuery;
+    },
+    emptyQuery() {
+      this.searchQuery = ''
     }
   },
   async mounted() {
