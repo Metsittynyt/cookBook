@@ -72,6 +72,7 @@ recipesRouter.post('/', async (request, response) => {
         name: body.name,
         ingredients: body.ingredients,
         steps: body.steps,
+        tags: body.tags || [],
         public: body.public || false,
         user: user._id
     })
@@ -92,6 +93,7 @@ recipesRouter.put('/:id', async (request, response) => {
         name: body.name,
         ingredients: body.ingredients,
         steps: body.steps,
+        tags: body.tags,
         public: body.public || false
     };
 
