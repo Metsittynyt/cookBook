@@ -55,8 +55,9 @@ ul {
 
 button {
     font-size: 20px;
-    padding: 14px 16px;
-    border-radius: 5px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    margin: 5px;
 }
 
 .topnav {
@@ -211,7 +212,7 @@ footer {
     border: 1px solid #ccc;
     padding: 1em;
     background-color: #f9f9f9;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -230,3 +231,23 @@ footer {
     margin: auto;
 }
 
+.search-input {
+    width: 300px;
+    padding: 10px;
+    margin-bottom: 30px;
+    box-sizing: border-box;
+    border: 1px solid black;
+    border-radius: 10px;
+    font-size: 20px;
+}
+
+button#empty {
+    border: none;
+    background: none;
+    color: rgb(100, 100, 100);
+    margin: 0;
+}
+
+.quote {
+    padding: 50px
+}
