@@ -1,6 +1,9 @@
 <template>
-    <div :class="['banner', bannerClass]"></div>
+    <div :class="['banner', bannerClass]">
+        <p class="quote" v-html="formattedQuote"></p>
+    </div>
 </template>
+
 
 <script>
 export default {
@@ -9,6 +12,20 @@ export default {
         bannerClass: {
             type: String,
             default: ''
+        }
+    },
+    data() {
+        return {
+            quotes: {
+                'home-banner': 'People who love to eat are always the best people.\n— Julia Child',
+                'cookbook-banner': 'One cannot think well, love well, sleep well, if one has not dined well.\n— Virginia Woolf',
+                'user-banner': 'Food is everything we are.\n— Anthony Bourdain'
+            }
+        };
+    },
+    computed: {
+        formattedQuote() {
+            return this.quotes[this.bannerClass].replace(/\n/g, '<br>');
         }
     }
 }
@@ -21,21 +38,25 @@ export default {
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
+    text-align: center;
+    align-content: center;
+    font-size: x-large;
+    font-weight: bold;
+    color: black;
+    text-shadow: 2px 2px lightgray;
+    white-space: pre-wrap;
 }
 
 .home-banner {
-    /*background-image: url('');*/
     background-color: var(--lightBlue);
 }
 
 .cookbook-banner {
-    /*background-image: url('');*/
     background-color: var(--lightRed);
 }
 
 
 .user-banner {
-    /*background-image: url('');*/
     background-color: var(--lightGreen);
 }
 </style>
