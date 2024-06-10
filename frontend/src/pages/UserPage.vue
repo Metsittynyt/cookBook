@@ -1,14 +1,9 @@
 <template>
-  <div class="page">
-    <div v-if="!isLoggedIn">
-      <button @click="toggleMode">Switch to {{ isSignUp ? 'Log In' : 'Sign Up' }}</button>
-      <LogInForm :is-sign-up="isSignUp" />
-    </div>
+  <LogInForm v-if="!isLoggedIn" />
 
-    <div v-else>
-      <h1>Logged in as {{ username }}</h1>
-      <button @click="logout" class="logout-button">Log out</button>
-    </div>
+  <div v-else>
+    <h1>Logged in as {{ username }}</h1>
+    <button @click="logout" class="logout-button">Log out</button>
   </div>
 </template>
 
@@ -23,8 +18,7 @@ export default {
   },
   data() {
     return {
-      username: '',
-      isSignUp: false
+      username: ''
     }
   },
   computed: {
@@ -38,9 +32,6 @@ export default {
     this.username = localStorage.getItem('username') || 'User';
   },
   methods: {
-    toggleMode() {
-      this.isSignUp = !this.isSignUp;
-    },
     logout() {
       localStorage.removeItem('token');
       localStorage.removeItem('username'); // Clear the username from local storage
