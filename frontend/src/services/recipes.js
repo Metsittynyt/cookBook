@@ -1,14 +1,28 @@
 import axios from 'axios'
 const baseUrl = '/api/recipes'
 
-const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+const getAll = (token = null, onlyUserRecipes = false) => {
+  const config = {};
+
+  if (token && onlyUserRecipes) {
+    config.headers = {
+      Authorization: `Bearer ${token}`
+    };
+    config.params = {
+      myRecipes: true
+    };
+  }
+
+  const request = axios.get(baseUrl, config);
+  return request.then(response => response.data);
 }
 
-const create = async newObject => {
-  const response = await axios.post(baseUrl, newObject)
-  return response.data
+const create = async (newObject, token) => {
+  const config = {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+  const response = await axios.post(baseUrl, newObject, config);
+  return response.data;
 }
 
 const getRidOff = (id) => {

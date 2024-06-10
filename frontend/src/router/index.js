@@ -6,9 +6,9 @@ import UserPage from '../pages/UserPage.vue';
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', component: HomePage, name: 'HomePage' },
-    { path: '/cookbook', component: CookBookPage, name: 'CookBookPage' },
-    { path: '/user', component: UserPage, name: 'UserPage' }
+    { path: '/', component: HomePage, name: 'HomePage', meta: { bannerClass: 'home-banner' } },
+    { path: '/cookbook', component: CookBookPage, name: 'CookBookPage', meta: { bannerClass: 'cookbook-banner' } },
+    { path: '/user', component: UserPage, name: 'UserPage', meta: { bannerClass: 'user-banner' } }
     // other routes
   ],
 });

@@ -1,5 +1,5 @@
 <template>
-  <div class="page">
+  <div>
     <h1>Recipes</h1>
     <div class="RecipesGrid">
       <div v-for="recipe in publicRecipes" :key="recipe.id" class="recipe-cell">

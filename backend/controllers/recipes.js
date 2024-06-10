@@ -13,12 +13,28 @@ const getTokenFrom = request => {
     return null
 }
 
-// Get all
+// Get recipes (all or user-specific based on query parameter)
 recipesRouter.get('/', async (request, response) => {
-    const recipes = await Recipe
-        .find({}).populate('user', { username: 1, name: 1 })
-    response.json(recipes)
-})
+    const token = getTokenFrom(request);
+    const myRecipes = request.query.myRecipes === 'true';
+
+    try {
+        if (myRecipes && token) {
+            const decodedToken = jwt.verify(token, process.env.SECRET);
+            if (!decodedToken.id) {
+                return response.status(401).json({ error: 'token missing or invalid' });
+            }
+            const userRecipes = await Recipe.find({ user: decodedToken.id }).populate('user', { username: 1, name: 1 });
+            response.json(userRecipes);
+        } else {
+            const recipes = await Recipe.find({}).populate('user', { username: 1, name: 1 });
+            response.json(recipes);
+        }
+    } catch (error) {
+        console.error('Error fetching recipes:', error);
+        response.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 
 // Get one by id
@@ -56,7 +72,8 @@ recipesRouter.post('/', async (request, response) => {
         name: body.name,
         ingredients: body.ingredients,
         steps: body.steps,
-        public: body.public || false
+        public: body.public || false,
+        user: user._id
     })
 
     const newRecipe = await recipe.save()
