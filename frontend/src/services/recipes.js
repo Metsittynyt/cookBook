@@ -17,6 +17,11 @@ const getAll = (token = null, onlyUserRecipes = false) => {
   return request.then(response => response.data);
 }
 
+const getById = (id) => {
+  const request = axios.get(`${ baseUrl }/${id}`)
+  return request.then(response => response.data)
+}
+
 const create = async (newObject, token) => {
   const config = {
     headers: { Authorization: `Bearer ${token}` }
@@ -35,4 +40,4 @@ const update = (id, newObject) => {
   return request.then(response => response.data)
 }
 
-export default { getAll, create, getRidOff, update}
+export default { getAll, getById, create, getRidOff, update}
