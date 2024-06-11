@@ -1,17 +1,29 @@
 <template>
     <div class="recipe">
-        <h3>{{ recipe.name }}</h3>
-        <div id="ingredients">
-            <h4>Ingredients:</h4>
-            <ul>
-                <li v-for="ingredient in splitText(recipe.ingredients)" :key="ingredient">{{ ingredient }}</li>
-            </ul>
+        <div class="header">
+            <router-link :to="`/${recipe.id}`">
+                <h3>{{ recipe.name }}</h3>
+            </router-link>
+            <button class="bookmark">
+                <i class="far fa-bookmark" style="font-size: 20px; color: black"></i>
+            </button>
         </div>
-        <div id="steps">
-            <h4>Steps:</h4>
-            <ol>
-                <li v-for="step in splitText(recipe.steps)" :key="step">{{ step }}</li>
-            </ol>
+        <div class="content">
+            <div class="difficulty_box">
+                <img v-for="index in 4" :key="index" :src="require('@/assets/photos/cookhat.png')" alt="cookhat"
+                    :class="{ colored: index <= recipe.difficulty }" class="difficulty_level">
+            </div>
+            <div class="time-box">
+                <i class="far fa-hourglass" style="font-size: 20px; color: black"></i>
+                <p>{{ formatTime(recipe.time) }}</p>
+            </div>
+            <div class="tags_box">
+                <span v-for="tag in (recipe.tags)" :key="tag" class="tag">{{ tag }}</span>
+            </div>
+            <div class="likes-box">
+                <i class="far fa-heart" style="font-size: 20px; color: black;"></i>
+                <p>Likes</p>
+            </div>
         </div>
     </div>
 </template>
@@ -28,7 +40,100 @@ export default {
     methods: {
         splitText(text) {
             return text.split('\n');
+        },
+        formatTime(time) {
+            const hours = Math.floor(time / 60);
+            const minutes = time % 60;
+            return `${hours}h ${minutes}m`;
         }
     }
 }
 </script>
+
+<style>
+.recipe {
+    position: relative;
+    padding: 16px;
+    border: 2px solid black;
+    border-radius: 20px 0px 0px 0px;
+    box-shadow: 4px 4px #00000042;
+    max-width: 400px;
+    text-align: center;
+    background-color: rgb(239 248 240);
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.bookmark {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.difficulty_box {
+    display: flex;
+    margin: 8px 0;
+    justify-content: center;
+}
+
+.difficulty_level {
+    width: 50px;
+    height: 50px;
+    margin-right: 4px;
+}
+
+.difficulty_level.colored {
+    filter: sepia(100%) hue-rotate(45deg) saturate(9) contrast(70%);
+}
+
+.difficulty_level:not(.colored) {
+    filter: brightness(100%);
+}
+
+.time-box {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+}
+
+.time-box p {
+    margin-left: 8px;
+}
+
+.tags_box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.tag {
+    background: white;
+    padding: 4px 8px;
+    border: 1px solid black;
+    border-radius: 4px;
+}
+
+.likes-box {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.likes-box p {
+    margin-left: 8px;
+}
+</style>
