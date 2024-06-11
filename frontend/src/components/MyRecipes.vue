@@ -1,13 +1,17 @@
 <template>
   <div>
     <h2>My Recipes</h2>
-    <div class="RecipesGrid">
-      <div v-for="recipe in recipes" :key="recipe.id" class="recipe-cell">
-        <i :class="['fas', 'fa-globe', recipe.public ? 'public-icon' : 'private-icon']" id="globe_icon"
-          @click="togglePublicStatus(recipe)"></i>
-        <i class="fas fa-trash-alt" id="trash_can_icon" @click="delete_recipe(recipe.id)"></i>
-        <MyRecipeBox :recipe="recipe" />
-        <i class="fas fa-edit" id="edit_icon" @click="edit_recipe(recipe)"></i>
+    <div v-if="error" class="error-message">{{ error }}</div>
+    <div class="RecipesList">
+      <div v-for="recipe in recipes" :key="recipe.id" class="recipe-list-item">
+        <h3>{{ recipe.name }}</h3>
+        <div>
+          <i class="fas fa-edit" id="edit-icon" @click="edit_recipe(recipe)" aria-label="Edit Recipe"></i>
+          <i :class="['fas', 'fa-globe', recipe.public ? 'public-icon' : 'private-icon']" id="globe-icon"
+            @click="togglePublicStatus(recipe)" aria-label="Toggle Public/Private"></i>
+          <i class="fas fa-trash-alt" id="trash-can-icon" @click="deleteRecipe(recipe.id)"
+            aria-label="Delete Recipe"></i>
+        </div>
       </div>
     </div>
   </div>
@@ -15,12 +19,10 @@
 
 <script>
 import recipeService from '@/services/recipes';
-import MyRecipeBox from './MyRecipeBox';
 
 export default {
   name: 'MyRecipes',
   components: {
-    MyRecipeBox
   },
   props: {
     recipes: Array
@@ -68,3 +70,40 @@ export default {
   }
 }
 </script>
+
+<style>
+.RecipesList {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  padding: 20px
+}
+
+.recipe-list-item {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 10px;
+  align-items: center;
+}
+
+.recipe-list-item h3,
+.recipe-list-item div {
+  margin: 0px 10px;
+}
+
+.recipe-list-item div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+}
+
+#globe-icon,
+#trash-can-icon,
+#edit-icon {
+  margin: 10px;
+}
+</style>
