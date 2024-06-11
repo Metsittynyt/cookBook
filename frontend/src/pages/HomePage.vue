@@ -6,7 +6,7 @@
     <button @click="performSearch">Search</button>
     <p>{{ numOfRecipes }} recipes found.</p>
     <div class="RecipesGrid">
-      <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe-cell"> <!-- Use filteredRecipes here -->
+      <div v-for="recipe in filteredRecipes" :key="recipe.id">
         <RecipeBox :recipe="recipe" />
       </div>
     </div>
@@ -48,7 +48,7 @@ export default {
       try {
         const response = await recipeService.getAll();
         if (response && Array.isArray(response)) {
-          this.publicRecipes = response.filter(recipe => recipe.public);
+          this.publicRecipes = response.filter(recipe => recipe.public && recipe.user.username !== localStorage.getItem('username'));
         } else {
           this.error = 'Unexpected response format';
         }
