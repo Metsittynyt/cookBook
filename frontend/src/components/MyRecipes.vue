@@ -6,7 +6,7 @@
         <i :class="['fas', 'fa-globe', recipe.public ? 'public-icon' : 'private-icon']" id="globe_icon"
           @click="togglePublicStatus(recipe)"></i>
         <i class="fas fa-trash-alt" id="trash_can_icon" @click="delete_recipe(recipe.id)"></i>
-        <RecipeBox :recipe="recipe" />
+        <MyRecipeBox :recipe="recipe" />
         <i class="fas fa-edit" id="edit_icon" @click="edit_recipe(recipe)"></i>
       </div>
     </div>
@@ -15,12 +15,12 @@
 
 <script>
 import recipeService from '@/services/recipes';
-import RecipeBox from './RecipeBox';
+import MyRecipeBox from './MyRecipeBox';
 
 export default {
   name: 'MyRecipes',
   components: {
-    RecipeBox
+    MyRecipeBox
   },
   props: {
     recipes: Array
