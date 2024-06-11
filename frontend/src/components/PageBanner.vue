@@ -25,7 +25,7 @@ export default {
     },
     computed: {
         formattedQuote() {
-            const quote = this.quotes[this.bannerClass] || 'Default quote';
+            const quote = this.quotes[this.bannerClass] || '';
             return quote.replace(/\n/g, '<br>'); // This will now always have a valid string to operate on
         }
     }
@@ -60,5 +60,9 @@ export default {
 
 .user-banner {
     background-color: var(--lightBlue);
+}
+
+.recipe-banner {
+    height: 0px;
 }
 </style>
