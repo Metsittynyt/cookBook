@@ -1,7 +1,23 @@
 <template>
     <div class="recipe_detail">
         <div v-if="recipe">
-            <h1>{{ recipe.name }}</h1>
+            <div class="header">
+                <h1>{{ recipe.name }}</h1>
+                <button class="bookmark">
+                    <i class="far fa-bookmark" style="font-size: 30px; color: black"></i>
+                </button>
+            </div>
+            <h3>Created by: </h3>
+            <h3>Difficulty:</h3>
+            <div class="difficulty_box">
+                <img v-for="index in 4" :key="index" :src="require('@/assets/photos/cookhat.png')" alt="cookhat"
+                    :class="{ colored: index <= recipe.difficulty }" class="difficulty_level">
+            </div>
+            <h3>Cooking time:</h3>
+            <div class="time-box">
+                <i class="far fa-hourglass"></i>
+                <p>{{ formatTime(recipe.time) }}</p>
+            </div>
             <div>
                 <h4>Ingredients:</h4>
                 <ul class="ingredients-box">
@@ -13,6 +29,10 @@
                 <ol class="steps-box">
                     <li v-for="step in splitText(recipe.steps)" :key="step">{{ step }}</li>
                 </ol>
+            </div>
+            <div class="likes-box">
+                <i class="far fa-heart" style="font-size: 20px; color: black;"></i>
+                <p>Likes</p>
             </div>
         </div>
         <div v-else-if="error">
@@ -57,6 +77,11 @@ export default {
         },
         splitText(text) {
             return text.split('\n');
+        },
+        formatTime(time) {
+            const hours = Math.floor(time / 60);
+            const minutes = time % 60;
+            return `${hours}h ${minutes}m`;
         }
     },
     created() {
@@ -71,5 +96,18 @@ export default {
     text-align: left;
     width: fit-content;
     margin: auto;
+}
+
+.recipe_detail {
+    margin: auto;
+    padding: 20px;
+    min-width: 300px;
+    max-width: 500px;
+    border: 1px solid rgb(180, 178, 178);
+    border-radius: 10px;
+}
+
+.recipe_detail .header .bookmark {
+    position: relative;
 }
 </style>
