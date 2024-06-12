@@ -1,14 +1,24 @@
-import axios from 'axios'
-const baseUrl = '/api/login'
+import axios from 'axios';
+
+axios.defaults.withCredentials = true;
+
+const baseUrl = '/api/login';
+const usersUrl = '/api/users';
 
 const login = async credentials => {
-  const response = await axios.post(baseUrl, credentials)
-  return response.data
-}
+  const response = await axios.post(baseUrl, credentials);
+  return response.data;
+};
 
 const signUp = async credentials => {
-  const response = await axios.post('/api/users', credentials)
-  return response.data
-}
+  const response = await axios.post(usersUrl, credentials);
+  return response.data;
+};
 
-export default { login, signUp }
+const logout = async () => {
+  const response = await axios.get(baseUrl);
+  return response.data;
+};
+
+
+export default { login, signUp, logout };

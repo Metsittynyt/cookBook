@@ -1,43 +1,47 @@
-import axios from 'axios'
-const baseUrl = '/api/recipes'
+import axios from 'axios';
 
-const getAll = (token = null, onlyUserRecipes = false) => {
+axios.defaults.withCredentials = true;
+
+const baseUrl = '/api/recipes';
+
+
+const getAll = (onlyUser = false, excludeUser = false, savedRecipes = false) => {
   const config = {};
-
-  if (token && onlyUserRecipes) {
-    config.headers = {
-      Authorization: `Bearer ${token}`
-    };
-    config.params = {
-      myRecipes: true
-    };
+  if (onlyUser) {
+    config.params = { myRecipes: true };
+  } else if (excludeUser) {
+    config.params = { excludeMyRecipes: true };
+  } else if (savedRecipes) {
+    config.params = { mySavedRecipes: true };
   }
-
   const request = axios.get(baseUrl, config);
   return request.then(response => response.data);
-}
+};
 
 const getById = (id) => {
-  const request = axios.get(`${ baseUrl }/${id}`)
-  return request.then(response => response.data)
-}
+  const request = axios.get(`${baseUrl}/${id}`);
+  return request.then(response => response.data);
+};
 
-const create = async (newObject, token) => {
-  const config = {
-    headers: { Authorization: `Bearer ${token}` }
-  };
-  const response = await axios.post(baseUrl, newObject, config);
+const create = async (newObject) => {
+  const response = await axios.post(baseUrl, newObject);
   return response.data;
-}
+};
 
 const getRidOff = (id) => {
-  const request = axios.delete(`${ baseUrl }/${id}`)
-  return request.then(response => response.data)
-}
+  const request = axios.delete(`${baseUrl}/${id}`);
+  return request.then(response => response.data);
+};
 
 const update = (id, newObject) => {
-  const request = axios.put(`${ baseUrl }/${id}`, newObject)
-  return request.then(response => response.data)
+  const request = axios.put(`${baseUrl}/${id}`, newObject);
+  return request.then(response => response.data);
+};
+
+const toggleStatus = (id, action) => {
+  const url = `${baseUrl}/${id}/toggleStatus?action=${action}`;
+  return axios.get(url).then(response => response.data);
 }
 
-export default { getAll, getById, create, getRidOff, update}
+
+export default { getAll, getById, create, getRidOff, update, toggleStatus };
