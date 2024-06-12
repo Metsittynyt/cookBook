@@ -4,8 +4,8 @@
             <router-link :to="`/${recipe.id}`">
                 <h3>{{ recipe.name }}</h3>
             </router-link>
-            <button class="bookmark">
-                <i class="far fa-bookmark" style="font-size: 20px; color: black"></i>
+            <button v-if="isAuthenticated" class="bookmark" @click="handleSaveRecipe">
+                <i :class="isSaved ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
             </button>
         </div>
         <div class="content">
@@ -14,21 +14,24 @@
                     :class="{ colored: index <= recipe.difficulty }" class="difficulty_level">
             </div>
             <div class="time-box">
-                <i class="far fa-hourglass" style="font-size: 20px; color: black"></i>
+                <i class="far fa-hourglass"></i>
                 <p>{{ formatTime(recipe.time) }}</p>
             </div>
             <div class="tags_box">
                 <span v-for="tag in (recipe.tags)" :key="tag" class="tag">{{ tag }}</span>
             </div>
-            <div class="likes-box">
-                <i class="far fa-heart" style="font-size: 20px; color: black;"></i>
-                <p>Likes</p>
+            <div v-if="isAuthenticated" class="likes-box">
+                <i @click="handleRecipeLike" :class="['fa-heart', isLiked ? 'fas' : 'far']"></i>
+                <p>{{ recipe.likes }}</p>
             </div>
         </div>
     </div>
 </template>
 
+
 <script>
+import recipeService from '@/services/recipes'
+
 export default {
     name: 'RecipeBox',
     props: {
@@ -37,7 +40,36 @@ export default {
             required: true
         }
     },
+    data() {
+        return {
+            isAuthenticated: false,
+            savedRecipes: [],
+            isLiked: false,
+            isSaved: false,
+        };
+    },
+    created() {
+        this.checkAuthentication();
+        this.checkIfLiked();
+        this.checkIfSaved();
+    },
     methods: {
+        checkAuthentication() {
+            const getCookie = (name) => {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            };
+            return this.isAuthenticated = !!getCookie('auth_token');
+        },
+        async checkIfLiked() {
+            const response = await recipeService.toggleStatus(this.recipe.id, "like");
+            this.isLiked = response.isLiked;
+        },
+        async checkIfSaved() {
+            const response = await recipeService.toggleStatus(this.recipe.id, "save");
+            this.isSaved = response.isSaved;
+        },
         splitText(text) {
             return text.split('\n');
         },
@@ -45,7 +77,40 @@ export default {
             const hours = Math.floor(time / 60);
             const minutes = time % 60;
             return `${hours}h ${minutes}m`;
+        },
+        async handleRecipeLike(e) {
+            e.preventDefault();
+            const updatedRecipe = {
+                ...this.recipe,
+                likeToggle: true
+            };
+
+            const response = await recipeService.update(this.recipe.id, updatedRecipe);
+            if (response) {
+                console.log("Success: ", response);
+                this.$emit('update:recipe', response);
+                this.isLiked = !this.isLiked;
+            } else {
+                console.error("Failed to update recipe");
+            }
+        },
+        async handleSaveRecipe(e) {
+            e.preventDefault();
+            const updatedRecipe = {
+                ...this.localRecipe,
+                saveToggle: true
+            };
+
+            const response = await recipeService.update(this.recipe.id, updatedRecipe);
+            if (response) {
+                console.log("Success: ", response);
+                this.$emit('update:recipe', response);
+                this.isSaved = !this.isSaved;
+            } else {
+                console.error("Failed to update recipe");
+            }
         }
+
     }
 }
 </script>
