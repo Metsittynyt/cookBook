@@ -1,8 +1,17 @@
 const config = require('./utils/config')
 const express = require('express')
 require('express-async-errors')
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const app = express()
 const cors = require('cors')
+
+app.use(session({
+  secret: process.env.SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: 'auto', httpOnly: true }
+}));
 
 const recipesRouter = require('./controllers/recipes')
 const userRouter = require('./controllers/users')
@@ -24,9 +33,22 @@ mongoose.connect(config.MONGODB_URI)
     logger.error('error connection to MongoDB:', error.message)
   })
 
-app.use(cors())
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [process.env.DEV_ORIGIN, process.env.PROD_ORIGIN];
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed for this origin'));
+    }
+  },
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.static('dist'))
 app.use(express.json())
+app.use(cookieParser());
 app.use(middleware.requestLogger)
 
 app.use('/api/recipes', recipesRouter)
