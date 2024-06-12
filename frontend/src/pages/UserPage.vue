@@ -10,6 +10,7 @@
 
 <script>
 import LogInForm from '../components/LogInForm'
+import loginService from '@/services/login'
 
 export default {
   name: 'UserPage',
@@ -23,18 +24,22 @@ export default {
   },
   computed: {
     isLoggedIn() {
-      // Check if the user is logged in by checking for a token in local storage
-      return !!localStorage.getItem('token');
+      const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+      };
+
+      return !!getCookie('auth_token');
     }
   },
   created() {
-    // Optionally, retrieve the username from local storage if available
     this.username = localStorage.getItem('username') || 'User';
   },
   methods: {
-    logout() {
-      localStorage.removeItem('token');
-      localStorage.removeItem('username'); // Clear the username from local storage
+    async logout() {
+      const result = await loginService.logout();
+      console.log(result);
       this.$router.push('/').then(() => {
         window.location.reload();
       });

@@ -64,9 +64,7 @@ export default {
                     return;
                 }
                 try {
-                    const response = await loginService.signUp(this.credentials);
-                    localStorage.setItem('token', response.token);
-                    localStorage.setItem('username', response.username);
+                    await loginService.signUp(this.credentials);
                     this.$router.push('/cookbook').then(() => window.location.reload());
                 } catch (error) {
                     this.errorMessage = 'Failed to sign up. Please check your input.';
@@ -74,9 +72,7 @@ export default {
                 }
             } else {
                 try {
-                    const response = await loginService.login(this.credentials);
-                    localStorage.setItem('token', response.token);
-                    localStorage.setItem('username', response.username);
+                    await loginService.login(this.credentials);
                     this.$router.push('/cookbook').then(() => window.location.reload());
                 } catch (error) {
                     this.errorMessage = 'Failed to login. Please check your credentials.';
@@ -87,6 +83,7 @@ export default {
     }
 }
 </script>
+
 
 
 <style>
