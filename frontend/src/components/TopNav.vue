@@ -16,12 +16,19 @@
 </template>
 
 <script>
+
 export default {
   name: 'TopNav',
   computed: {
     isLoggedIn() {
-      return !!localStorage.getItem('token');
+      const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+      };
+
+      return !!getCookie('auth_token');
     }
-  }
+  },
 }
 </script>

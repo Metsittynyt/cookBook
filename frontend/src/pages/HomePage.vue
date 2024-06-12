@@ -7,7 +7,7 @@
     <p>{{ numOfRecipes }} recipes found.</p>
     <div class="RecipesGrid">
       <div v-for="recipe in filteredRecipes" :key="recipe.id">
-        <RecipeBox :recipe="recipe" />
+        <RecipeBox :recipe="recipe" @update:recipe="handleRecipeUpdate" />
       </div>
     </div>
   </div>
@@ -46,9 +46,9 @@ export default {
   methods: {
     async fetchPublicRecipes() {
       try {
-        const response = await recipeService.getAll();
+        const response = await recipeService.getAll(false, true);
         if (response && Array.isArray(response)) {
-          this.publicRecipes = response.filter(recipe => recipe.public && recipe.user.username !== localStorage.getItem('username'));
+          this.publicRecipes = response.filter(recipe => recipe.public);
         } else {
           this.error = 'Unexpected response format';
         }
@@ -62,6 +62,10 @@ export default {
     },
     emptyQuery() {
       this.searchQuery = ''
+    },
+    handleRecipeUpdate(updatedRecipe) {
+      this.recipe = updatedRecipe;
+      this.fetchPublicRecipes()
     }
   },
   async mounted() {
