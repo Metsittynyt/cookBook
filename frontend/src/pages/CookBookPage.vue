@@ -2,43 +2,41 @@
   <div>
     <h1>My cookbook</h1>
     <button @click="add_recipe">Add new recipe</button>
-    <CreateOverlay 
-      v-if="showOverlay" 
-      :initialRecipe="selectedRecipe" 
-      @close-overlay="closeOverlay" 
-      @submit-success="handleSuccess" 
-    />
-    <MyRecipes :recipes="recipes" @edit-recipe="edit_recipe" @change="fetchRecipes"/>
-    <h2>Saved recipes</h2>
-    <div class="saved"></div>
+    <CreateOverlay v-if="showOverlay" :initialRecipe="selectedRecipe" @close-overlay="closeOverlay"
+      @submit-success="handleSuccess" />
+    <MyRecipes :recipes="myRecipes" @edit-recipe="edit_recipe" @change="fetchRecipes" />
+    <h2 v-if=!this.savedRecipes>Saved recipes</h2>
+    <div v-for="recipe in savedRecipes" :key="recipe.id">
+      <RecipeBox :recipe="recipe" @update:recipe="handleRecipeUpdate" />
+    </div>
   </div>
 </template>
 
 <script>
+import recipeService from '@/services/recipes'
 import CreateOverlay from '../components/CreateOverlay'
 import MyRecipes from '../components/MyRecipes'
-import recipeService from '@/services/recipes'
+import RecipeBox from '@/components/RecipeBox.vue';
 
 export default {
   name: 'CookBookPage',
   components: {
     CreateOverlay,
-    MyRecipes
+    MyRecipes,
+    RecipeBox
   },
   data() {
     return {
       showOverlay: false,
       selectedRecipe: null,
-      recipes: []
+      myRecipes: [],
+      savedRecipes: []
     }
   },
   methods: {
     async fetchRecipes() {
-      try {
-        this.recipes = await recipeService.getAll(localStorage.getItem("token"), true);
-      } catch (error) {
-        console.error('Failed to fetch recipes:', error);
-      }
+      this.myRecipes = await recipeService.getAll(true);
+      this.savedRecipes = await recipeService.getAll(false, false, true)
     },
     add_recipe() {
       console.log("Add new recipe...")
@@ -60,6 +58,9 @@ export default {
     handleSuccess() {
       this.closeOverlay();
       this.fetchRecipes(); // Fetch recipes after successful submit
+    },
+    handleRecipeUpdate() {
+      this.fetchRecipes()
     }
   },
   async mounted() {
