@@ -146,22 +146,9 @@ footer {
     overflow-y: auto;
 }
 
-.close_button,
-#edit_icon {
+.close_button {
     position: absolute;
     top: 10px;
-    right: 10px;
-}
-
-#trash_can_icon {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-}
-
-#globe_icon {
-    position: absolute;
-    top: 50%;
     right: 10px;
 }
 
@@ -170,7 +157,7 @@ footer {
 }
 
 .private-icon {
-    color: lightgray
+    color: rgb(147, 147, 147)
 }
 
 .recipe-form form {
@@ -205,6 +192,7 @@ footer {
     display: grid;
     grid-gap: 10px;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    padding: 20px
 }
 
 .recipe-cell {
