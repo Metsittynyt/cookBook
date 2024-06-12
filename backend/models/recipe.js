@@ -9,6 +9,9 @@ const recipeSchema = new mongoose.Schema({
   difficulty: String,
   tags: [],
   public: Boolean,
+  likes: Number,
+  likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  savedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
