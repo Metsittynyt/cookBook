@@ -9,7 +9,7 @@
           <i class="fas fa-edit" id="edit-icon" @click="edit_recipe(recipe)" aria-label="Edit Recipe"></i>
           <i :class="['fas', 'fa-globe', recipe.public ? 'public-icon' : 'private-icon']" id="globe-icon"
             @click="togglePublicStatus(recipe)" aria-label="Toggle Public/Private"></i>
-          <i class="fas fa-trash-alt" id="trash-can-icon" @click="deleteRecipe(recipe.id)"
+          <i class="fas fa-trash-alt" id="trash-can-icon" @click="delete_recipe(recipe.id)"
             aria-label="Delete Recipe"></i>
         </div>
       </div>
