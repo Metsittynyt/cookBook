@@ -5,7 +5,12 @@ axios.defaults.withCredentials = true;
 const baseUrl = '/api/recipes';
 
 
-const getAll = (onlyUser = false, excludeUser = false, savedRecipes = false) => {
+const getAll = () => {
+  const request = axios.get(baseUrl)
+  return request.then(response => response.data)
+}
+
+const getSome = (onlyUser = false, excludeUser = false, savedRecipes = false) => {
   const config = {};
   if (onlyUser) {
     config.params = { myRecipes: true };
@@ -14,7 +19,7 @@ const getAll = (onlyUser = false, excludeUser = false, savedRecipes = false) => 
   } else if (savedRecipes) {
     config.params = { mySavedRecipes: true };
   }
-  const request = axios.get(baseUrl, config);
+  const request = axios.get(`${baseUrl}/part`, config);
   return request.then(response => response.data);
 };
 
@@ -44,4 +49,4 @@ const toggleStatus = (id, action) => {
 }
 
 
-export default { getAll, getById, create, getRidOff, update, toggleStatus };
+export default { getAll, getSome, getById, create, getRidOff, update, toggleStatus };
