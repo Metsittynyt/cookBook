@@ -35,8 +35,8 @@ export default {
   },
   methods: {
     async fetchRecipes() {
-      this.myRecipes = await recipeService.getAll(true);
-      this.savedRecipes = await recipeService.getAll(false, false, true)
+      this.myRecipes = await recipeService.getSome(true);
+      this.savedRecipes = await recipeService.getSome(false, false, true)
     },
     add_recipe() {
       console.log("Add new recipe...")
