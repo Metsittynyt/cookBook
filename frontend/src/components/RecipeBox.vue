@@ -63,12 +63,16 @@ export default {
             return this.isAuthenticated = !!getCookie('auth_token');
         },
         async checkIfLiked() {
-            const response = await recipeService.toggleStatus(this.recipe.id, "like");
-            this.isLiked = response.isLiked;
+            if (this.isAuthenticated) {
+                const response = await recipeService.toggleStatus(this.recipe.id, "like");
+                this.isLiked = response.isLiked;
+            }
         },
         async checkIfSaved() {
-            const response = await recipeService.toggleStatus(this.recipe.id, "save");
-            this.isSaved = response.isSaved;
+            if (this.isAuthenticated) {
+                const response = await recipeService.toggleStatus(this.recipe.id, "save");
+                this.isSaved = response.isSaved;
+            }
         },
         splitText(text) {
             return text.split('\n');

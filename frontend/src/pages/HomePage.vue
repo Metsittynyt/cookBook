@@ -27,6 +27,7 @@ export default {
       publicRecipes: [],
       searchQuery: '',
       activeSearchQuery: '',
+      isAuthenticated: false,
       error: null
     };
   },
@@ -45,17 +46,26 @@ export default {
   },
   methods: {
     async fetchPublicRecipes() {
-      try {
-        const response = await recipeService.getAll(false, true);
-        if (response && Array.isArray(response)) {
-          this.publicRecipes = response.filter(recipe => recipe.public);
-        } else {
-          this.error = 'Unexpected response format';
-        }
-      } catch (error) {
-        this.error = 'Failed to fetch recipes';
-        console.error(error);
+      let response;
+      if (this.isAuthenticated) {
+        response = await recipeService.getSome(false, true);
+      } else {
+        response = await recipeService.getAll();
       }
+      console.log(this.isAuthenticated)
+      if (response && Array.isArray(response)) {
+        this.publicRecipes = response.filter(recipe => recipe.public);
+      } else {
+        this.error = 'Unexpected response format';
+      }
+    },
+    checkAuthentication() {
+      const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+      };
+      return this.isAuthenticated = !!getCookie('auth_token');
     },
     performSearch() {
       this.activeSearchQuery = this.searchQuery;
@@ -69,6 +79,7 @@ export default {
     }
   },
   async mounted() {
+    this.checkAuthentication();
     await this.fetchPublicRecipes();
   }
 };
