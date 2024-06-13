@@ -7,8 +7,14 @@ const isAuthenticated = require('../utils/auth');
 const { request, response } = require('express');
 const recipe = require('../models/recipe');
 
-// Get recipes (all or user-specific based on query parameter)
-recipesRouter.get('/', isAuthenticated, async (request, response) => {
+// Get all recipes
+recipesRouter.get('/', async (request, response) => {
+    const recipes = await Recipe.find({}).populate('user', { username: 1, name: 1 })
+    response.json(recipes)
+})
+
+// Get recipes based on query parameter)
+recipesRouter.get('/part', isAuthenticated, async (request, response) => {
     const { myRecipes, excludeMyRecipes, mySavedRecipes } = request.query;
     const userId = request.user.id;
 
