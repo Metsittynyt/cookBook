@@ -34,9 +34,14 @@ export default {
     }
   },
   created() {
-    this.username = localStorage.getItem('username') || 'User';
+    this.getName()
   },
   methods: {
+    async getName() {
+      if (this.isLoggedIn) {
+        this.username = await loginService.getUsername()
+      }
+    },
     async logout() {
       const result = await loginService.logout();
       console.log(result);

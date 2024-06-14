@@ -20,5 +20,10 @@ const logout = async () => {
   return response.data;
 };
 
+const getUsername = async () => {
+  const response = await axios.get(`${usersUrl}/name`)
+  return response.data
+}
 
-export default { login, signUp, logout };
+
+export default { login, signUp, logout, getUsername };
