@@ -35,7 +35,7 @@ export default {
 
 <style>
 .banner {
-    height: 200px;
+    height: fit-content;
     width: 100%;
     background-size: contain;
     background-position: center;
