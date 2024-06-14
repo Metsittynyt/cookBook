@@ -1,29 +1,27 @@
 <template>
-    <div class="recipe">
-        <div class="header">
-            <router-link :to="`/${recipe.id}`">
-                <h3>{{ recipe.name }}</h3>
-            </router-link>
-            <button v-if="isAuthenticated" class="bookmark" @click="handleSaveRecipe">
-                <i :class="isSaved ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
-            </button>
+    <div class="header">
+        <router-link :to="`/${recipe.id}`">
+            <h3>{{ recipe.name }}</h3>
+        </router-link>
+        <button v-if="isAuthenticated" class="bookmark" @click="handleSaveRecipe">
+            <i :class="isSaved ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
+        </button>
+    </div>
+    <div class="content">
+        <div class="difficulty_box">
+            <img v-for="index in 4" :key="index" :src="require('@/assets/photos/cookhat.png')" alt="cookhat"
+                :class="{ colored: index <= recipe.difficulty }" class="difficulty_level">
         </div>
-        <div class="content">
-            <div class="difficulty_box">
-                <img v-for="index in 4" :key="index" :src="require('@/assets/photos/cookhat.png')" alt="cookhat"
-                    :class="{ colored: index <= recipe.difficulty }" class="difficulty_level">
-            </div>
-            <div class="time-box">
-                <i class="far fa-hourglass"></i>
-                <p>{{ formatTime(recipe.time) }}</p>
-            </div>
-            <div class="tags_box">
-                <span v-for="tag in (recipe.tags)" :key="tag" class="tag">{{ tag }}</span>
-            </div>
-            <div v-if="isAuthenticated" class="likes-box">
-                <i @click="handleRecipeLike" :class="['fa-heart', isLiked ? 'fas' : 'far']"></i>
-                <p>{{ recipe.likes }}</p>
-            </div>
+        <div class="time-box">
+            <i class="far fa-hourglass"></i>
+            <p>{{ formatTime(recipe.time) }}</p>
+        </div>
+        <div class="tags_box">
+            <span v-for="tag in (recipe.tags)" :key="tag" class="tag">{{ tag }}</span>
+        </div>
+        <div v-if="isAuthenticated" class="likes-box">
+            <i @click="handleRecipeLike" :class="['fa-heart', isLiked ? 'fas' : 'far']"></i>
+            <p>{{ recipe.likes }}</p>
         </div>
     </div>
 </template>
@@ -122,13 +120,13 @@ export default {
 <style>
 .recipe {
     position: relative;
-    padding: 16px;
-    border: 2px solid black;
+    padding: 10px;
+    border: 1px solid black;
     border-radius: 20px 0px 0px 0px;
     box-shadow: 4px 4px #00000042;
-    max-width: 400px;
+    width: 250px;
     text-align: center;
-    background-color: rgb(239 248 240);
+    background-color: rgb(245, 250, 245);
 }
 
 .header {

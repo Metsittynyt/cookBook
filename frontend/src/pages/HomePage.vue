@@ -6,7 +6,7 @@
     <button @click="performSearch">Search</button>
     <p>{{ numOfRecipes }} recipes found.</p>
     <div class="RecipesGrid">
-      <div v-for="recipe in filteredRecipes" :key="recipe.id">
+      <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe">
         <RecipeBox :recipe="recipe" @update:recipe="handleRecipeUpdate" />
       </div>
     </div>
