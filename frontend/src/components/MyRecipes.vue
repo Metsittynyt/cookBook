@@ -4,7 +4,9 @@
     <div v-if="error" class="error-message">{{ error }}</div>
     <div class="RecipesList">
       <div v-for="recipe in recipes" :key="recipe.id" class="recipe-list-item">
-        <h3>{{ recipe.name }}</h3>
+        <router-link :to="`/${recipe.id}`">
+          <h3>{{ recipe.name }}</h3>
+        </router-link>
         <div>
           <i class="fas fa-edit" id="edit-icon" @click="edit_recipe(recipe)" aria-label="Edit Recipe"></i>
           <i :class="['fas', 'fa-globe', recipe.public ? 'public-icon' : 'private-icon']" id="globe-icon"
