@@ -3,8 +3,8 @@
         <div v-if="recipe">
             <div class="header">
                 <h1>{{ recipe.name }}</h1>
-                <button class="bookmark">
-                    <i class="far fa-bookmark" style="font-size: 30px; color: black"></i>
+                <button v-if="isAuthenticated" class="bookmark" @click="handleSaveRecipe">
+                    <i :class="isSaved ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
                 </button>
             </div>
             <h3>Created by: </h3>
@@ -30,9 +30,13 @@
                     <li v-for="step in splitText(recipe.steps)" :key="step">{{ step }}</li>
                 </ol>
             </div>
-            <div class="likes-box">
+            <div v-if="isAuthenticated" class="likes-box">
+                <i @click="handleRecipeLike" :class="['fa-heart', isLiked ? 'fas' : 'far']"></i>
+                <p>{{ recipe.likes }}</p>
+            </div>
+            <div v-else class="likes-box">
                 <i class="far fa-heart" style="font-size: 20px; color: black;"></i>
-                <p>Likes</p>
+                <p>{{ recipe.likes }}</p>
             </div>
         </div>
         <div v-else-if="error">
@@ -58,6 +62,9 @@ export default {
     data() {
         return {
             recipe: null,
+            isAuthenticated: false,
+            isLiked: false,
+            isSaved: false,
             error: null
         };
     },
@@ -82,15 +89,62 @@ export default {
             const hours = Math.floor(time / 60);
             const minutes = time % 60;
             return `${hours}h ${minutes}m`;
+        },
+        checkAuthentication() {
+            const getCookie = (name) => {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            };
+            return this.isAuthenticated = !!getCookie('auth_token');
+        },
+        async checkIfLiked() {
+            if (this.isAuthenticated) {
+                const response = await recipeService.toggleStatus(this.id, "like");
+                this.isLiked = response.isLiked;
+            }
+        },
+        async checkIfSaved() {
+            if (this.isAuthenticated) {
+                const response = await recipeService.toggleStatus(this.id, "save");
+                this.isSaved = response.isSaved;
+            }
+        },
+        async handleRecipeLike(e) {
+            e.preventDefault();
+            const updatedRecipe = {
+                ...this.recipe,
+                likeToggle: true
+            };
+
+            await recipeService.update(this.id, updatedRecipe);
+            this.fetchRecipe();
+            this.isLiked = !this.isLiked;
+        },
+        async handleSaveRecipe(e) {
+            e.preventDefault();
+            const updatedRecipe = {
+                ...this.recipe,
+                saveToggle: true
+            };
+
+            await recipeService.update(this.id, updatedRecipe);
+            this.fetchRecipe();
+            this.isSaved = !this.isSaved;
         }
     },
-    created() {
-        this.fetchRecipe();
+    async mounted() {
+        await this.fetchRecipe();
+        this.checkAuthentication();
+        if (this.recipe) {
+            this.checkIfLiked();
+            this.checkIfSaved();
+        }
     }
 };
 </script>
 
-<style>
+<style scoped>
 .ingredients-box,
 .steps-box {
     text-align: left;
@@ -98,8 +152,17 @@ export default {
     margin: auto;
 }
 
+.time-box,
+.likes-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .recipe_detail {
     margin: auto;
+    margin-top: 10%;
+    margin-bottom: 10%;
     padding: 20px;
     min-width: 300px;
     max-width: 500px;
