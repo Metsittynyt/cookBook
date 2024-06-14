@@ -5,6 +5,7 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const app = express()
 const cors = require('cors')
+const path = require('path');
 
 app.use(session({
   secret: process.env.SECRET,
@@ -55,7 +56,20 @@ app.use('/api/recipes', recipesRouter)
 app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
 
+// SPA Fallback: Serve index.html for all non-API routes
+app.get('*', (request, response) => {
+  response.sendFile(path.resolve('dist', 'index.html'));
+});
+
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
+
+app.use(express.static(path.join(__dirname, 'dist'), {
+  setHeaders: function (res, path) {
+    if (path.endsWith('.woff2')) {
+      res.set('Content-Type', 'font/woff2');
+    }
+  }
+}));
 
 module.exports = app
