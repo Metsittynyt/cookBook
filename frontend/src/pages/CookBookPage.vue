@@ -5,9 +5,14 @@
     <CreateOverlay v-if="showOverlay" :initialRecipe="selectedRecipe" @close-overlay="closeOverlay"
       @submit-success="handleSuccess" />
     <MyRecipes :recipes="myRecipes" @edit-recipe="edit_recipe" @change="fetchRecipes" />
-    <h2 v-if=!this.savedRecipes>Saved recipes</h2>
-    <div v-for="recipe in savedRecipes" :key="recipe.id">
-      <RecipeBox :recipe="recipe" @update:recipe="handleRecipeUpdate" />
+    <h2>Saved recipes</h2>
+    <p v-if="savedRecipes.length <= 0">Your saved recipes will appear here. Start by exploring the wide range of options
+      and save the ones you love!
+    </p>
+    <div class="RecipesGrid">
+      <div v-for="recipe in savedRecipes" :key="recipe.id" class="recipe">
+        <RecipeBox :recipe="recipe" @update:recipe="handleRecipeUpdate" />
+      </div>
     </div>
   </div>
 </template>
