@@ -38,7 +38,6 @@ body {
 }
 
 .page {
-    margin: 10px;
     padding: 10px;
     text-align: center;
     box-sizing: border-box;
@@ -58,58 +57,6 @@ button {
     padding: 10px 16px;
     border-radius: 10px;
     margin: 5px;
-}
-
-.topnav {
-    background-color: var(--green);
-    overflow: hidden;
-    height: 100px;
-    padding: 10px;
-    padding-right: 20px;
-}
-
-.topnav a {
-    color: var(--text-inverted);
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 25px;
-}
-
-.topnavLinks a:hover {
-    background-color: var(--lightGreen);
-    color: var(--text);
-}
-
-.topnavLinks a.active {
-    background-color: var(--lightGreen);
-    color: var(--text);
-}
-
-.topnavLinks {
-    display: flex;
-    flex-direction: row-reverse;
-    flex-wrap: wrap;
-    gap: 20px;
-    align-content: center;
-    width: 60%;
-    height: 100%;
-}
-
-.nav-item {
-    border: 1px solid black;
-    border-radius: 5px;
-}
-
-.topnavLogo {
-    float: left;
-    width: 40%;
-}
-
-
-#Logo {
-    height: 100px;
-    width: 100px;
 }
 
 footer {
@@ -189,9 +136,10 @@ footer {
 }
 
 .RecipesGrid {
-    display: grid;
-    grid-gap: 10px;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
     padding: 20px
 }
 

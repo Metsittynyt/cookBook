@@ -73,10 +73,11 @@ export default {
 
 <style>
 .RecipesList {
-  display: grid;
-  grid-gap: 10px;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  padding: 20px
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+  gap: 20px;
 }
 
 .recipe-list-item {
@@ -87,6 +88,7 @@ export default {
   border: 1px solid black;
   border-radius: 10px;
   align-items: center;
+  width: 300px;
 }
 
 .recipe-list-item h3,
