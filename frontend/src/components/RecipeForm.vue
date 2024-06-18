@@ -3,7 +3,7 @@
     <div v-if="error">
       {{ error }}
     </div>
-    <form id="form" @submit="handleSubmit" v-else>
+    <form id="form" @submit="handleSubmit">
       <div class="form-group">
         <label for="recipeName">Recipe Name:</label>
         <input type="text" id="recipeName" v-model="recipe.name" required>
@@ -37,7 +37,8 @@
       </div>
       <div class="form-group">
         <label for="publicCheck">Publish?</label>
-        <input type="checkbox" id="publicCheck" v-model="recipe.public">
+        <input type="checkbox" id="publicCheck" v-model="recipe.public" class="big-checkbox">
+        <label for="publicCheck" class="big-checkbox-label"></label>
       </div>
       <button type="submit">{{ isEditing ? 'Update' : 'Submit' }} Recipe</button>
     </form>
@@ -61,13 +62,16 @@ export default {
         tags: [],
         public: false
       })
+    },
+    isEditing: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       recipe: { ...this.initialRecipe },
       error: null,
-      isEditing: !!this.initialRecipe.id,
       tags: ['Sweet', 'Salty', 'Sour', 'Vegan', 'Vegetarian', 'Dairy', 'Dairy-free', 'Lunch', 'Dinner', 'Snack', 'Dessert'],
       selectedTags: [],
       difficultyLabel: '',
@@ -81,21 +85,24 @@ export default {
       this.recipe.tags = this.selectedTags;
 
       try {
-        const action = this.isEditing ? recipeService.update(this.recipe.id, this.recipe) : recipeService.create(this.recipe);
+        const action = this.isEditing
+          ? recipeService.update(this.recipe.id, this.recipe)
+          : recipeService.create(this.recipe);
         const response = await action;
         console.log('Submission successful:', response);
         this.$emit('submit-success');
-        this.resetForm();
+        if (!this.isEditing) {
+          this.resetForm();
+        }
       } catch (error) {
         console.error('Error submitting the recipe:', error);
         this.error = 'Failed to submit the recipe. Please try again.';
       }
     },
     resetForm() {
-      this.recipe = { ...this.initialRecipe, tags: [], public: false, cookingTime: 30, difficulty: 1 };
+      this.recipe = { ...this.initialRecipe, tags: [], public: false, time: 30, difficulty: 1 };
       this.selectedTags = [];
       this.error = null;
-      this.isEditing = false;
       this.updateCookingTimeLabel();
       this.updateDifficultyLabel();
     },
@@ -120,13 +127,12 @@ export default {
       deep: true,
       handler(newRecipe) {
         this.recipe = { ...newRecipe };
-        this.isEditing = !!newRecipe.id;
         this.selectedTags = newRecipe.tags ? [...newRecipe.tags] : [];
         this.updateCookingTimeLabel();
         this.updateDifficultyLabel();
       }
     },
-    'recipe.cookingTime': function () {
+    'recipe.time': function () {
       this.updateCookingTimeLabel();
     },
     'recipe.difficulty': function () {
@@ -141,10 +147,22 @@ export default {
 </script>
 
 <style>
+.recipe-form {
+  min-width: 300px;
+  max-width: 500px;
+  margin: auto
+}
+
+.form-group {
+  margin: 10px 0px 10px 0px;
+}
+
 .checkbox-container {
+  margin: 20px 0px 20px 0px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 20px;
+  justify-content: center;
 }
 
 .checkbox-wrapper {
