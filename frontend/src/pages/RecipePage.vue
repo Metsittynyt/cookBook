@@ -7,7 +7,7 @@
                     <i :class="isSaved ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
                 </button>
             </div>
-            <h3>Created by: </h3>
+            <h3>Created by: {{ username }}</h3>
             <h3>Difficulty:</h3>
             <div class="difficulty_box">
                 <img v-for="index in 4" :key="index" :src="require('@/assets/photos/cookhat.png')" alt="cookhat"
@@ -50,6 +50,7 @@
 
 <script>
 import recipeService from '@/services/recipes';
+import loginService from '@/services/login';
 
 export default {
     name: 'RecipePage',
@@ -61,6 +62,7 @@ export default {
     },
     data() {
         return {
+            username: '',
             recipe: null,
             isAuthenticated: false,
             isLiked: false,
@@ -68,19 +70,24 @@ export default {
             error: null
         };
     },
+    async created() {
+        await this.checkAuthentication();
+        await this.fetchRecipe();
+        if (this.isAuthenticated) {
+            await this.getName();
+            this.checkIfLiked();
+            this.checkIfSaved();
+        }
+    },
     methods: {
         async fetchRecipe() {
-            try {
-                const response = await recipeService.getById(this.id);
-                if (response) {
-                    this.recipe = response;
-                } else {
-                    this.error = 'Recipe not found';
-                }
-            } catch (error) {
-                this.error = 'Failed to fetch recipe';
-                console.error(error);
-            }
+            const response = await recipeService.getById(this.id);
+            this.recipe = response;
+        },
+        async getName() {
+            const response = await loginService.getUsername();
+            this.username = response;
+
         },
         splitText(text) {
             return text.split('\n');
@@ -96,7 +103,7 @@ export default {
                 const parts = value.split(`; ${name}=`);
                 if (parts.length === 2) return parts.pop().split(';').shift();
             };
-            return this.isAuthenticated = !!getCookie('auth_token');
+            this.isAuthenticated = !!getCookie('auth_token');
         },
         async checkIfLiked() {
             if (this.isAuthenticated) {
@@ -131,14 +138,6 @@ export default {
             await recipeService.update(this.id, updatedRecipe);
             this.fetchRecipe();
             this.isSaved = !this.isSaved;
-        }
-    },
-    async mounted() {
-        await this.fetchRecipe();
-        this.checkAuthentication();
-        if (this.recipe) {
-            this.checkIfLiked();
-            this.checkIfSaved();
         }
     }
 };
