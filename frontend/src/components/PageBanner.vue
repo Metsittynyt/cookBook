@@ -62,7 +62,9 @@ export default {
     background-color: var(--lightBlue);
 }
 
-.recipe-banner {
+.recipe-banner,
+.create-banner,
+.edit-banner {
     height: 0px;
 }
 </style>
