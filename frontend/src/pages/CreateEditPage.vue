@@ -1,8 +1,6 @@
 <template>
-    <div>
-        <h1>{{ isEditing ? 'Edit Recipe' : 'Create New Recipe' }}</h1>
-        <RecipeForm :initialRecipe="recipe" :isEditing="isEditing" @submit-success="handleSuccess" />
-    </div>
+    <h1>{{ isEditing ? 'Edit Recipe' : 'Create New Recipe' }}</h1>
+    <RecipeForm :initialRecipe="recipe" :isEditing="isEditing" @submit-success="handleSuccess" />
 </template>
 
 <script>
