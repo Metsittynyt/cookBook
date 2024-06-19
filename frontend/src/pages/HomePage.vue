@@ -1,9 +1,14 @@
 <template>
   <div>
+    <div id="pans-decoration"></div>
     <h1>Recipes</h1>
-    <button id="empty" @click="emptyQuery">x</button>
-    <input type="text" v-model="searchQuery" placeholder="Search recipes..." class="search-input">
-    <button @click="performSearch">Search</button>
+    <div id="searchBar">
+      <button id="empty" @click="emptyQuery">x</button>
+      <input type="text" v-model="searchQuery" placeholder="Search recipes..." class="search-input">
+      <button @click="performSearch" id="search">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
     <p>{{ numOfRecipes }} recipes found.</p>
     <div class="RecipesGrid">
       <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe">

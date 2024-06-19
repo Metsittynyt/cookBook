@@ -47,19 +47,7 @@ export default {
     color: black;
     text-shadow: 2px 2px lightgray;
     white-space: pre-wrap;
-}
-
-.home-banner {
-    background-color: var(--lightGreen);
-}
-
-.cookbook-banner {
-    background-color: var(--lightRed);
-}
-
-
-.user-banner {
-    background-color: var(--lightBlue);
+    background-color: #83c5be;
 }
 
 .recipe-banner,

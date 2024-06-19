@@ -144,14 +144,14 @@ export default {
 .slider {
     box-sizing: border-box;
     border-radius: 5px;
-    border: 2px solid black;
+    border: 2px solid #006d77;
     position: absolute;
     cursor: pointer;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--lightBlue);
+    background-color: #83C5BE;
     transition: 0.3s;
 }
 
@@ -161,7 +161,7 @@ export default {
     content: "";
     height: 20px;
     width: 20px;
-    border: 2px solid black;
+    border: 2px solid #006d77;
     border-radius: 5px;
     left: -2px;
     bottom: 0px;
@@ -170,7 +170,7 @@ export default {
 }
 
 .toggle:checked+.slider {
-    background-color: var(--blue);
+    background-color: #83C5BE;
 }
 
 .toggle:checked+.slider:before {
@@ -215,10 +215,10 @@ export default {
     justify-content: center;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    background: var(--lightBlue);
+    background: #83C5BE;
     gap: 20px;
-    border-radius: 5px;
-    border: 2px solid black;
+    border: 2px solid #006d77;
+    box-shadow: 4px 4px #006d77;
 }
 
 .flip-card__back {
@@ -244,7 +244,7 @@ export default {
     width: 250px;
     height: 40px;
     border-radius: 5px;
-    border: 2px solid black;
+    border: 2px solid #006d77;
     background-color: white;
     font-size: 15px;
     font-weight: 600;
@@ -265,6 +265,7 @@ export default {
 .flip-card__btn:active,
 .button-confirm:active {
     transform: translate(3px, 3px);
+    box-shadow: none;
 }
 
 .flip-card__btn {
@@ -272,11 +273,12 @@ export default {
     width: 120px;
     height: 40px;
     border-radius: 5px;
-    border: 2px solid black;
+    border: 2px solid #006d77;
     background-color: white;
     font-size: 17px;
     font-weight: 600;
     color: black;
     cursor: pointer;
+    box-shadow: 4px 4px#006d77;
 }
 </style>

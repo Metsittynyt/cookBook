@@ -1,30 +1,3 @@
-/* Colors */
-
-/*
-COLOR CODES:
-Red - #9c2135
-LightRed - #e9d1d5
-Blue - #282c97
-LightBlue - #dedffc
-Green - #006a44
-LightGreen - #c9dcd5
-*/
-
-:root {
-    --red: #9c2135;
-    --lightRed: #e9d1d5;
-    --blue: #282c97;
-    --lightBlue: #dedffc;
-    --green: #006a44;
-    --lightGreen: #c9dcd5;
-    --text: black;
-    --text-inverted: white;
-
-    /* Fonts */
-    --font: sans-serif;
-}
-
-
 html,
 body {
     margin: 0;
@@ -42,6 +15,7 @@ body {
     text-align: center;
     box-sizing: border-box;
     flex: 1;
+    background-color: #edf6f9;
 }
 
 h1 {
@@ -55,85 +29,36 @@ ul {
 button {
     font-size: 20px;
     padding: 10px 16px;
-    border-radius: 10px;
     margin: 5px;
+    border: 1.5px solid #006d77;
+    background-color: white;
+    box-shadow: 4px 4px #83c5be;
+    cursor: pointer;
 }
 
 footer {
-    background-color: var(--green);
+    background-color: #006d77;
     min-height: 100px;
     bottom: 0px;
     width: 100%;
 }
 
-.overlay {
-    position: fixed;
-    display: flex;
-    /* Hidden by default */
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-color: rgb(0, 0, 0, 0.5);
-    z-index: 1000;
-    cursor: pointer;
+#pans-decoration,
+#herbs-decoration {
+    height: 150px;
+    background-size: 200px;
+    background-repeat: repeat-x;
+    background-position-x: 20px;
+    margin: 0px -10px 0px -10px;
 }
 
-#create_overlay {
-    position: absolute;
-    max-height: 90%;
-    width: 90%;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    padding: 10px;
-    background-color: rgba(255, 255, 255, 1);
-    border: 5px solid black;
-    border-radius: 5px;
-    box-sizing: border-box;
-    overflow-y: auto;
+#pans-decoration {
+    background-image: url('@/assets/photos/pan.png');
 }
 
-.close_button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
-
-.public-icon {
-    color: blue;
-}
-
-.private-icon {
-    color: rgb(147, 147, 147)
-}
-
-.recipe-form form {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
-    padding: 10px;
-}
-
-.form-group {
-    display: grid;
-    grid-template-columns: 1fr;
-}
-
-.form-group label {
-    font-size: 20px;
-    grid-column: 1 / -1;
-}
-
-.form-group input,
-.form-group textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid black;
-    border-radius: 4px;
-    grid-column: 1 / -1;
-    resize: vertical;
-    box-sizing: border-box;
+#herbs-decoration {
+    background-image: url('@/assets/photos/herbs.png');
+    background-size: 300px;
 }
 
 .RecipesGrid {
@@ -168,21 +93,45 @@ footer {
     margin: auto;
 }
 
+#searchBar {
+    border: 1.5px solid #006d77;
+    width: fit-content;
+    margin: auto;
+    padding: 0px;
+    margin-bottom: 10px;
+    box-shadow: 4px 4px #83c5be;
+    min-width: 300px;
+    max-width: 500px;
+}
+
 .search-input {
-    width: 300px;
     padding: 10px;
-    margin-bottom: 30px;
     box-sizing: border-box;
-    border: 1px solid black;
-    border-radius: 10px;
+    border: none;
     font-size: 20px;
+    color: #006d77;
+}
+
+.search-input::placeholder {
+    color: #999;
 }
 
 button#empty {
     border: none;
-    background: none;
-    color: rgb(100, 100, 100);
+    color: #006d77;
     margin: 0;
+    box-shadow: none;
+    background-color: white;
+}
+
+button#search {
+    margin: 0px;
+    box-shadow: none;
+    border: none;
+}
+
+.fa-search {
+    color: #006d77;
 }
 
 .quote {
@@ -191,7 +140,7 @@ button#empty {
 
 @media (max-width: 400px) {
     .search-input {
-        width: 250px;
+        width: 200px;
     }
 }
 

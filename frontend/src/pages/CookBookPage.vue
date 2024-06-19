@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div id="herbs-decoration"></div>
     <h1>My cookbook</h1>
     <button @click="add_recipe">Add new recipe</button>
     <MyRecipes :recipes="myRecipes" @edit-recipe="edit_recipe" @change="fetchRecipes" />

@@ -1,27 +1,31 @@
 <template>
-    <div class="header">
-        <router-link :to="`/${recipe.id}`">
-            <h3>{{ recipe.name }}</h3>
-        </router-link>
-        <button v-if="isAuthenticated" class="bookmark" @click="handleSaveRecipe">
-            <i :class="isSaved ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
-        </button>
-    </div>
-    <div class="content">
-        <div class="difficulty_box">
-            <img v-for="index in 4" :key="index" :src="require('@/assets/photos/cookhat.png')" alt="cookhat"
-                :class="{ colored: index <= recipe.difficulty }" class="difficulty_level">
+    <div class="recipeTop"></div>
+    <div class="recipeContent">
+        <div class="header">
+            <router-link :to="`/${recipe.id}`">
+                <h3>{{ recipe.name }}</h3>
+            </router-link>
+            <button v-if="isAuthenticated" class="bookmark" @click="handleSaveRecipe">
+                <i :class="isSaved ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
+            </button>
         </div>
-        <div class="time-box">
-            <i class="far fa-hourglass"></i>
-            <p>{{ formatTime(recipe.time) }}</p>
-        </div>
-        <div class="tags_box">
-            <span v-for="tag in (recipe.tags)" :key="tag" class="tag">{{ tag }}</span>
-        </div>
-        <div v-if="isAuthenticated" class="likes-box">
-            <i @click="handleRecipeLike" :class="['fa-heart', isLiked ? 'fas' : 'far']"></i>
-            <p>{{ recipe.likes }}</p>
+        <div class="content">
+            <div class="difficulty_box">
+                <img v-for="index in 4" :key="index" :src="require('@/assets/photos/cookhat.png')" alt="cookhat"
+                    :class="{ colored: index <= recipe.difficulty }" class="difficulty_level">
+            </div>
+            <div class="time-box">
+                <i class="far fa-hourglass"></i>
+                <p>{{ formatTime(recipe.time) }}</p>
+            </div>
+            <div class="tags_box">
+                <span v-for="tag in (recipe.tags)" :key="tag" class="tag">{{ tag }}</span>
+            </div>
+            <div class="likes-box">
+                <i v-if="isAuthenticated" @click="handleRecipeLike" :class="['fa-heart', isLiked ? 'fas' : 'far']"></i>
+                <i v-else class="fas fa-heart"></i>
+                <p>{{ recipe.likes }}</p>
+            </div>
         </div>
     </div>
 </template>
@@ -119,20 +123,61 @@ export default {
 
 <style>
 .recipe {
-    position: relative;
-    padding: 10px;
-    border: 1px solid black;
-    border-radius: 20px 0px 0px 0px;
-    box-shadow: 4px 4px #00000042;
-    width: 250px;
-    text-align: center;
-    background-color: rgb(245, 250, 245);
+    width: 300px;
+    box-shadow: 4px 4px #83c5be;
+}
+
+.recipeTop {
+    height: 22px;
+    width: 100%;
+    background-image:
+        linear-gradient(90deg,
+            #fff 11px, 0,
+            #83c5be 15px, 0,
+            #edf6f9 21.5px, 0,
+            #83c5be 23px, 0,
+            #fff 99%),
+        radial-gradient(circle at 17px 8px,
+            rgba(255, 255, 255, 0) 40%,
+            #83c5be 40%,
+            #83c5be 45%,
+            white 45%),
+        radial-gradient(circle at 22px 8px,
+            #edf6f9 40%,
+            #83c5be 40%,
+            #83c5be 100%);
+    background-size: 32px 8px, 32px 16px, 32px 16px;
+    background-repeat: space no-repeat;
+    background-position: center top, center 6px, center 6px;
+    border: 1px solid #006d77;
+    border-top: none;
+    border-bottom: none;
+}
+
+.recipeContent {
+    min-width: 300px;
+    max-width: 500px;
+    border: 1px solid #006d77;
+    border-top: none;
+    background: white;
+    background-image: linear-gradient(90deg,
+            transparent 30px,
+            #E29578 30px,
+            #E29578 32px,
+            transparent 32px),
+        linear-gradient(#EDF6F9 0.1em, transparent 0.1em);
+    background-size: 100% 30px;
 }
 
 .header {
     display: flex;
     justify-content: center;
     position: relative;
+}
+
+.header a {
+    text-decoration: none;
+    color: #006d77;
 }
 
 .bookmark {
@@ -142,12 +187,16 @@ export default {
     background: none;
     border: none;
     cursor: pointer;
+    color: #E29578;
+    box-shadow: none;
 }
 
 .content {
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* background-image: linear-gradient(white 10%, #006d77 10%, white 11%); */
+    /* background-size: 10% 10%; */
 }
 
 .difficulty_box {
@@ -163,7 +212,7 @@ export default {
 }
 
 .difficulty_level.colored {
-    filter: sepia(100%) hue-rotate(45deg) saturate(9) contrast(70%);
+    filter: sepia(50%) hue-rotate(301deg) saturate(40) contrast(90%);
 }
 
 .difficulty_level:not(.colored) {
@@ -173,7 +222,6 @@ export default {
 .time-box {
     display: flex;
     align-items: center;
-    margin: 8px 0;
 }
 
 .time-box p {
@@ -198,9 +246,11 @@ export default {
     display: flex;
     align-items: center;
     margin-top: 8px;
+    color: #E29578
 }
 
 .likes-box p {
     margin-left: 8px;
+    color: black;
 }
 </style>

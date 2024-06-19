@@ -85,17 +85,30 @@ export default {
 .recipe-list-item {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px;
   padding: 10px;
-  border: 1px solid black;
-  border-radius: 10px;
+  border: 1px solid #006d77;
+  box-shadow: 4px 4px #83c5be;
   align-items: center;
   width: 300px;
+  background: white;
+  background-image: linear-gradient(90deg,
+      transparent 30px,
+      #E29578 30px,
+      #E29578 32px,
+      transparent 32px),
+    linear-gradient(#EDF6F9 0.1em, transparent 0.1em);
+  background-size: 100% 30px;
 }
 
 .recipe-list-item h3,
 .recipe-list-item div {
   margin: 0px 10px;
+}
+
+.recipe-list-item a {
+  color: #006d77;
+  text-decoration: none;
 }
 
 .recipe-list-item div {
@@ -109,5 +122,18 @@ export default {
 #trash-can-icon,
 #edit-icon {
   margin: 10px;
+}
+
+#trash-can-icon,
+#edit-icon {
+  color: #006d77;
+}
+
+.public-icon {
+  color: #006d77;
+}
+
+.private-icon {
+  color: #E29578;
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
   <div class="recipe-form">
+    <div class="recipeTop"></div>
     <div v-if="error">
       {{ error }}
     </div>
@@ -37,8 +38,7 @@
       </div>
       <div class="form-group">
         <label for="publicCheck">Publish?</label>
-        <input type="checkbox" id="publicCheck" v-model="recipe.public" class="big-checkbox">
-        <label for="publicCheck" class="big-checkbox-label"></label>
+        <input type="checkbox" id="publicCheck" v-model="recipe.public">
       </div>
       <button type="submit">{{ isEditing ? 'Update' : 'Submit' }} Recipe</button>
     </form>
@@ -148,13 +148,48 @@ export default {
 
 <style>
 .recipe-form {
-  min-width: 300px;
+  min-width: 260px;
   max-width: 500px;
   margin: auto
 }
 
+.recipe-form form {
+  padding: 20px 10px 20px 40px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 10px;
+  border: 1px solid #006d77;
+  border-top: none;
+  background: white;
+  background-image: linear-gradient(90deg,
+      transparent 30px,
+      #E29578 30px,
+      #E29578 32px,
+      transparent 32px),
+    linear-gradient(#EDF6F9 0.1em, transparent 0.1em);
+  background-size: 100% 30px;
+}
+
 .form-group {
+  display: grid;
+  grid-template-columns: 1fr;
   margin: 10px 0px 10px 0px;
+}
+
+.form-group label {
+  font-size: 20px;
+  grid-column: 1 / -1;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 8px;
+  border: 1.5px solid #006d77;
+  border-radius: 4px;
+  grid-column: 1 / -1;
+  resize: vertical;
+  box-sizing: border-box;
+  background: transparent;
 }
 
 .checkbox-container {
@@ -178,7 +213,7 @@ export default {
 label.custom-checkbox {
   cursor: pointer;
   padding: 5px 15px;
-  border: 2px solid #000;
+  border: 1.5px solid #006d77;
   border-radius: 10px;
   display: inline-block;
   background-color: #fff;
@@ -186,6 +221,19 @@ label.custom-checkbox {
 }
 
 input[type="checkbox"]:checked+label {
-  border: 4px solid var(--red);
+  border: 4px solid #E29578;
+}
+
+#cookingTimeSlider,
+#difficultySlider {
+  accent-color: #006d77;
+}
+
+input[type="range" i] {
+  appearance: auto;
+  cursor: pointer;
+  padding: initial;
+  border: initial;
+  margin: 2px;
 }
 </style>

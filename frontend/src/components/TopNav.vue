@@ -67,7 +67,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: var(--green);
+  background-color: #006d77;
   padding: 10px;
   color: white;
 }
@@ -81,6 +81,7 @@ export default {
   border: none;
   font-size: 24px;
   color: white;
+  box-shadow: none;
 }
 
 .topnavLinks {
@@ -94,7 +95,7 @@ export default {
 
 .nav-item.active,
 .nav-item:hover {
-  background-color: var(--lightGreen);
+  background-color: #edf6f9;
   color: black;
   border-radius: 10px;
 }
@@ -105,7 +106,7 @@ export default {
   right: 0;
   height: 100%;
   width: 250px;
-  background-color: var(--green);
+  background-color: #006d77;
   padding: 10px;
   padding-top: 60px;
   transform: translateX(100%);
@@ -147,6 +148,7 @@ export default {
   background: none;
   border: none;
   color: white;
+  box-shadow: none;
 }
 
 .overlay {

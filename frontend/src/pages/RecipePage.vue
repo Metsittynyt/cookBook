@@ -1,42 +1,41 @@
 <template>
-    <div class="recipe_detail">
-        <div v-if="recipe">
+    <div class="recipe-detail">
+        <div class="recipeTop"></div>
+        <div v-if="recipe" class="recipeContent">
             <div class="header">
                 <h1>{{ recipe.name }}</h1>
                 <button v-if="isAuthenticated" class="bookmark" @click="handleSaveRecipe">
                     <i :class="isSaved ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
                 </button>
             </div>
-            <h3>Created by: {{ username }}</h3>
-            <h3>Difficulty:</h3>
-            <div class="difficulty_box">
-                <img v-for="index in 4" :key="index" :src="require('@/assets/photos/cookhat.png')" alt="cookhat"
-                    :class="{ colored: index <= recipe.difficulty }" class="difficulty_level">
-            </div>
-            <h3>Cooking time:</h3>
-            <div class="time-box">
-                <i class="far fa-hourglass"></i>
-                <p>{{ formatTime(recipe.time) }}</p>
-            </div>
-            <div>
-                <h4>Ingredients:</h4>
-                <ul class="ingredients-box">
-                    <li v-for="ingredient in splitText(recipe.ingredients)" :key="ingredient">{{ ingredient }}</li>
-                </ul>
-            </div>
-            <div>
-                <h4>Steps:</h4>
-                <ol class="steps-box">
-                    <li v-for="step in splitText(recipe.steps)" :key="step">{{ step }}</li>
-                </ol>
-            </div>
-            <div v-if="isAuthenticated" class="likes-box">
-                <i @click="handleRecipeLike" :class="['fa-heart', isLiked ? 'fas' : 'far']"></i>
-                <p>{{ recipe.likes }}</p>
-            </div>
-            <div v-else class="likes-box">
-                <i class="far fa-heart" style="font-size: 20px; color: black;"></i>
-                <p>{{ recipe.likes }}</p>
+            <div class="content">
+                <h3>Created by: {{ username }}</h3>
+                <div class="difficulty_box">
+                    <img v-for="index in 4" :key="index" :src="require('@/assets/photos/cookhat.png')" alt="cookhat"
+                        :class="{ colored: index <= recipe.difficulty }" class="difficulty_level">
+                </div>
+                <div class="time-box">
+                    <i class="far fa-hourglass"></i>
+                    <p>{{ formatTime(recipe.time) }}</p>
+                </div>
+                <div class="ingredients-box">
+                    <h4>Ingredients:</h4>
+                    <ul>
+                        <li v-for="ingredient in splitText(recipe.ingredients)" :key="ingredient">{{ ingredient }}</li>
+                    </ul>
+                </div>
+                <div class="steps-box">
+                    <h4>Steps:</h4>
+                    <ol>
+                        <li v-for="step in splitText(recipe.steps)" :key="step">{{ step }}</li>
+                    </ol>
+                </div>
+                <div class="likes-box">
+                    <i v-if="isAuthenticated" @click="handleRecipeLike"
+                        :class="['fa-heart', isLiked ? 'fas' : 'far']"></i>
+                    <i v-else class="fas fa-heart" style="font-size: 20px; color: black;"></i>
+                    <p>{{ recipe.likes }}</p>
+                </div>
             </div>
         </div>
         <div v-else-if="error">
@@ -73,8 +72,8 @@ export default {
     async created() {
         await this.checkAuthentication();
         await this.fetchRecipe();
+        await this.getName();
         if (this.isAuthenticated) {
-            await this.getName();
             this.checkIfLiked();
             this.checkIfSaved();
         }
@@ -85,8 +84,9 @@ export default {
             this.recipe = response;
         },
         async getName() {
-            const response = await loginService.getUsername();
-            this.username = response;
+            console.log(this.recipe.user)
+            const response = await loginService.getById(this.recipe.user);
+            this.username = response.username;
 
         },
         splitText(text) {
@@ -144,11 +144,36 @@ export default {
 </script>
 
 <style scoped>
+p {
+    margin: 0px 0px 0px 10px;
+    font-size: large;
+}
+
+h3 {
+    margin-top: 0px;
+    font-weight: normal;
+}
+
+h1,
+h3,
+h4 {
+    margin-bottom: 0px;
+}
+
 .ingredients-box,
 .steps-box {
+    padding: 0px 30px 0px 30px;
+}
+
+ul,
+ol {
     text-align: left;
     width: fit-content;
     margin: auto;
+}
+
+li {
+    margin: 2.5px 0px 2.5px;
 }
 
 .time-box,
@@ -158,18 +183,33 @@ export default {
     align-items: center;
 }
 
-.recipe_detail {
-    margin: auto;
-    margin-top: 10%;
-    margin-bottom: 10%;
-    padding: 20px;
-    min-width: 300px;
+.content {
+    gap: 10px;
+    padding-bottom: 20px;
+}
+
+.recipe-detail {
+    min-width: 260px;
     max-width: 500px;
-    border: 1px solid rgb(180, 178, 178);
-    border-radius: 10px;
+    box-shadow: 4px 4px #83c5be;
+    margin: 30px auto 30px auto;
 }
 
 .recipe_detail .header .bookmark {
     position: relative;
+}
+
+@media (max-width: 500px) {
+    .recipe_detail {
+        padding: 5px;
+    }
+
+    h1 {
+        font-size: x-large;
+    }
+
+    h3 {
+        font-size: large;
+    }
 }
 </style>
