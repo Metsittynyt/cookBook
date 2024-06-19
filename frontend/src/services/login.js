@@ -21,9 +21,14 @@ const logout = async () => {
 };
 
 const getUsername = async () => {
+  console.log("HERE 1")
   const response = await axios.get(`${usersUrl}/name`)
   return response.data
 }
 
+const getById = async (id) => {
+  const response = await axios.get(`${usersUrl}/${id}`)
+  return response.data
+}
 
-export default { login, signUp, logout, getUsername };
+export default { login, signUp, logout, getUsername, getById };
