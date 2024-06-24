@@ -8,6 +8,7 @@
         </label>
         <div class="flip-card">
             <div class="flip-card-inner" ref="flipCardInner">
+                <div class="recipeTop"></div>
                 <div class="flip-card-front">
                     <form class="flip-card__form" @submit.prevent="submit">
                         <h2>Log in</h2>
@@ -25,6 +26,7 @@
                             required>
                         <input class="flip-card__input" name="username" placeholder="Username" type="text"
                             v-model="credentials.username" required>
+                        <PasswordValidator :password="credentials.password" />
                         <input class="flip-card__input" name="password" placeholder="Password" type="password"
                             v-model="credentials.password" required>
                         <input class="flip-card__input" name="passwordConfirm" placeholder="Confirm password"
@@ -39,12 +41,14 @@
 
 <script>
 import loginService from '../services/login';
-import ErrorMessage from '../components/ErrorMessage.vue'
+import ErrorMessage from '../components/ErrorMessage.vue';
+import PasswordValidator from '../components/PasswordValidator.vue';
 
 export default {
     name: 'LogInForm',
     components: {
-        ErrorMessage
+        ErrorMessage,
+        PasswordValidator
     },
     data() {
         return {
@@ -69,7 +73,7 @@ export default {
         },
         async submit() {
             if (this.isSignUp) {
-                if (!this.validatePassword(this.credentials.password)) {
+                if (!this.isPasswordValid) {
                     return;
                 }
                 if (this.credentials.password !== this.passwordConfirm) {
@@ -92,35 +96,22 @@ export default {
                     console.error('Login failed', error);
                 }
             }
+        }
+    },
+    computed: {
+        passwordValidation() {
+            const password = this.credentials.password;
+            return {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+            };
         },
-        validatePassword(password) {
-            const minLength = 8;
-            const hasUpperCase = /[A-Z]/.test(password);
-            const hasLowerCase = /[a-z]/.test(password);
-            const hasNumbers = /[0-9]/.test(password);
-            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-            if (password.length < minLength) {
-                this.errorMessage = `Password must be at least ${minLength} characters long.`;
-                return false;
-            }
-            if (!hasUpperCase) {
-                this.errorMessage = 'Password must contain at least one uppercase letter.';
-                return false;
-            }
-            if (!hasLowerCase) {
-                this.errorMessage = 'Password must contain at least one lowercase letter.';
-                return false;
-            }
-            if (!hasNumbers) {
-                this.errorMessage = 'Password must contain at least one number.';
-                return false;
-            }
-            if (!hasSpecialChar) {
-                this.errorMessage = 'Password must contain at least one special character.';
-                return false;
-            }
-            return true;
+        get isPasswordValid() {
+            const validation = this.passwordValidation;
+            return validation.length && validation.uppercase && validation.lowercase && validation.number && validation.special;
         }
     }
 }
@@ -135,16 +126,9 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 30px;
 }
 
 .switch {
-    --input-focus: #2d8cf0;
-    --font-color: #323232;
-    --font-color-sub: #666;
-    --bg-color: #fff;
-    --bg-color-alt: #666;
-    --main-color: #323232;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -153,7 +137,7 @@ export default {
     gap: 30px;
     width: 100px;
     height: 20px;
-    margin: auto;
+    margin: 0px auto 30px auto;
 }
 
 .toggle {
@@ -165,15 +149,15 @@ export default {
 .slider {
     box-sizing: border-box;
     border-radius: 5px;
-    border: 2px solid var(--main-color);
-    box-shadow: 4px 4px var(--main-color);
+    border: 2px solid #006d77;
+    box-shadow: 4px 4px #006d77;
     position: absolute;
     cursor: pointer;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--bg-colorcolor);
+    background-color: white;
     transition: 0.3s;
 }
 
@@ -183,17 +167,12 @@ export default {
     content: "";
     height: 20px;
     width: 20px;
-    border: 2px solid var(--main-color);
+    border: 2px solid #E29578;
     border-radius: 5px;
     left: -2px;
-    bottom: 2px;
-    background-color: var(--bg-color);
-    box-shadow: 0 3px 0 var(--main-color);
+    bottom: 1px;
+    background-color: #FFDDD2;
     transition: 0.3s;
-}
-
-.toggle:checked+.slider {
-    background-color: var(--input-focus);
 }
 
 .toggle:checked+.slider:before {
@@ -211,7 +190,6 @@ export default {
 .card-side {
     font-size: larger;
     font-weight: 600;
-    color: var(--font-color);
 }
 
 .card-side::before {
@@ -236,9 +214,10 @@ export default {
     display: flex;
     background-color: transparent;
     width: 100%;
-    height: 400px;
+    height: 450px;
     perspective: 1000px;
-    margin: 20px auto;
+    margin: 0px -1px 0px -1px;
+    box-sizing: border-box;
 }
 
 .flip-card-inner {
@@ -248,30 +227,51 @@ export default {
     text-align: center;
     transition: transform 0.8s;
     transform-style: preserve-3d;
+    box-sizing: border-box;
 }
 
 .flip-card-inner.flipped {
     transform: rotateY(180deg);
 }
 
-
 .flip-card-front,
 .flip-card-back {
     position: absolute;
-    width: 100%;
-    height: fit-content;
-    background-color: #83C5BE;
-    border: 2px solid #006d77;
-    box-shadow: 4px 4px #006d77;
+    width: calc(100% + 1px);
+    background: white;
+    background-image: linear-gradient(90deg,
+            transparent 30px,
+            #E29578 30px,
+            #E29578 32px,
+            transparent 32px),
+        linear-gradient(#EDF6F9 0.1em, transparent 0.1em);
+    background-size: 100% 30px;
+    border: 1px solid #006d77;
+    border-top: none;
+    box-shadow: 4px 4px #83C5BE;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    box-sizing: border-box;
+}
+
+.flip-card-front {
+    padding: 30px 10px 30px 30px;
 }
 
 .flip-card-back {
     transform: rotateY(180deg);
+    padding: 10px 10px 10px 30px;
+}
+
+.flip-card-front .flip-card__form {
+    gap: 40px;
+}
+
+.flip-card-back .flip-card__form {
+    gap: 5px;
 }
 
 .flip-card__form {
@@ -281,8 +281,12 @@ export default {
     gap: 20px;
 }
 
+.flip-card__form h2 {
+    margin: 0px;
+}
+
 .flip-card__input {
-    width: 250px;
+    width: 200px;
     height: 40px;
     border-radius: 5px;
     border: 2px solid #006d77;

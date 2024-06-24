@@ -45,7 +45,7 @@
   </div>
 </template>
 
-<script>
+<script scoped>
 import recipeService from '@/services/recipes';
 
 export default {
@@ -146,7 +146,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .recipe-form {
   min-width: 260px;
   max-width: 500px;
