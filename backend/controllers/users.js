@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const usersRouter = require('express').Router()
 const User = require('../models/user')
 const isAuthenticated = require('../utils/auth');
+const passwordValidator = require('../utils/passwordValidator');
 
 usersRouter.get('/', async (request, response) => {
     const users = await User.find({}).populate('recipes', { name: 1, public: 1 })
@@ -30,7 +31,7 @@ usersRouter.get('/:id', async (request, response) => {
     }
 });
 
-usersRouter.post('/', async (request, response) => {
+usersRouter.post('/',passwordValidator, async (request, response) => {
     const { username, name, password } = request.body
 
     const saltRounds = 10
