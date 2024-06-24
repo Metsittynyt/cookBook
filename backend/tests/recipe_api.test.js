@@ -1,21 +1,20 @@
 const supertest = require('supertest');
 const mongoose = require('mongoose');
-const helper = require('./test_helper')
+const helper = require('./test_helper');
 const app = require('../app');
 const api = supertest(app);
 
 const Recipe = require('../models/recipe');
 
-
 // Clear the database and add initial recipes before each test
 beforeEach(async () => {
-  await Recipe.deleteMany({})
-  await Recipe.insertMany(helper.initialRecipes)
-})
-
+  await Recipe.deleteMany({});
+  await helper.clearUsers();
+  await Recipe.insertMany(helper.initialRecipes);
+  await helper.createInitialUser();
+});
 
 describe('When there is initially some recipes saved', () => {
-  // Recipes are returned as JSON
   test('Recipes are returned as json', async () => {
     await api
       .get('/api/recipes')
@@ -23,34 +22,32 @@ describe('When there is initially some recipes saved', () => {
       .expect('Content-Type', /application\/json/);
   });
 
-  // All recipes are returned
   test('All recipes can be fetched', async () => {
-    const response = await helper.recipesInDb()
-    expect(response).toHaveLength(helper.initialRecipes.length)
-  })
-
-})
+    const response = await helper.recipesInDb();
+    expect(response).toHaveLength(helper.initialRecipes.length);
+  });
+});
 
 describe('Viewing of specific recipe.', () => {
   test('Succeeds with a valid id.', async () => {
-    const recipes = await helper.recipesInDb()
-    const recipeToView = recipes[0]
+    const recipes = await helper.recipesInDb();
+    const recipeToView = recipes[0];
 
     const resultRecipe = await api
       .get(`/api/recipes/${recipeToView.id}`)
       .expect(200)
-      .expect('Content-Type', /application\/json/)
+      .expect('Content-Type', /application\/json/);
 
-    expect(resultRecipe.body).toEqual(recipeToView)
-  })
+    expect(resultRecipe.body).toEqual(recipeToView);
+  });
 
   test('Fails with statuscode 404 if recipe does not exist.', async () => {
-    const validNonexistingId = await helper.nonExistingId()
+    const validNonexistingId = await helper.nonExistingId();
 
     await api
       .get(`/api/recipes/${validNonexistingId}`)
-      .expect(404)
-  })
+      .expect(404);
+  });
 
   test('fails with status code 400 if id is invalid', async () => {
     const invalidId = '6a3d6da78079881a82d3466';
@@ -62,19 +59,13 @@ describe('Viewing of specific recipe.', () => {
 
     expect(response.body.error).toBe('Invalid ID format');
   });
-})
-
+});
 
 describe('Addition of a new recipe', () => {
-  let token;
+  let cookie;
 
   beforeEach(async () => {
-    const userCredentials = { username: 'mrTest', password: 'superSecretPassword' };
-    const response = await api
-      .post('/api/login')
-      .send(userCredentials);
-
-    token = response.body.token; // Assuming the login returns a token
+    cookie = await helper.loginAndGetCookie();
   });
 
   test('Succeeds with a valid data.', async () => {
@@ -87,7 +78,7 @@ describe('Addition of a new recipe', () => {
 
     await api
       .post('/api/recipes')
-      .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookie)
       .send(newRecipe)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -103,17 +94,17 @@ describe('Addition of a new recipe', () => {
     const newRecipe = {
       name: 'invalid',
       public: false
-    }
+    };
 
     await api
       .post('/api/recipes')
-      .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookie)
       .send(newRecipe)
-      .expect(400)
+      .expect(400);
 
-    const response = await helper.recipesInDb()
-    expect(response).toHaveLength(helper.initialRecipes.length)
-  })
+    const response = await helper.recipesInDb();
+    expect(response).toHaveLength(helper.initialRecipes.length);
+  });
 
   test('Fails with statuscode 401 if not authenticated.', async () => {
     const newRecipe = {
@@ -126,12 +117,17 @@ describe('Addition of a new recipe', () => {
     await api
       .post('/api/recipes')
       .send(newRecipe)
-      .expect(400);
+      .expect(401);
   });
-})
-
+});
 
 describe('Handling of recipe update', () => {
+  let cookie;
+
+  beforeEach(async () => {
+    cookie = await helper.loginAndGetCookie();
+  });
+
   test('Recipe can be updated', async () => {
     const recipesAtStart = await helper.recipesInDb();
     const recipeToUpdate = recipesAtStart[0];
@@ -145,6 +141,7 @@ describe('Handling of recipe update', () => {
 
     await api
       .put(`/api/recipes/${recipeToUpdate.id}`)
+      .set('Cookie', cookie)
       .send(modifiedRecipe)
       .expect(200)
       .expect('Content-Type', /application\/json/);
@@ -157,23 +154,37 @@ describe('Handling of recipe update', () => {
     expect(updatedRecipe.steps).toBe(modifiedRecipe.steps);
     expect(updatedRecipe.public).toBe(modifiedRecipe.public);
   });
-})
-
+});
 
 describe('Deletion of recipe.', () => {
+  let cookie;
+
+  beforeEach(async () => {
+    cookie = await helper.loginAndGetCookie();
+  });
+
   test('Recipe can be deleted', async () => {
-    const recipes = await helper.recipesInDb()
-    const recipeToDelete = recipes[0]
+    const recipes = await helper.recipesInDb();
+    const recipeToDelete = recipes[0];
 
     await api
       .delete(`/api/recipes/${recipeToDelete.id}`)
-      .expect(204)
+      .set('Cookie', cookie)
+      .expect(204);
 
-    const response = await helper.recipesInDb()
-    expect(response).toHaveLength(helper.initialRecipes.length - 1)
-  })
-})
+    const response = await helper.recipesInDb();
+    expect(response).toHaveLength(helper.initialRecipes.length - 1);
+  });
 
+  test('Fails with statuscode 401 if not authenticated.', async () => {
+    const recipes = await helper.recipesInDb();
+    const recipeToDelete = recipes[0];
+
+    await api
+      .delete(`/api/recipes/${recipeToDelete.id}`)
+      .expect(401); 
+  });
+});
 
 // Close the database connection after all tests
 afterAll(async () => {

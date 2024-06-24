@@ -22,7 +22,7 @@ describe('when there is initially one user at db', () => {
             const newUser = {
                 username: 'mrTest',
                 name: 'Mr Test',
-                password: 'superSecretPassword',
+                password: 'SuperSecretPassword1!',
             }
 
             await api
@@ -44,7 +44,7 @@ describe('when there is initially one user at db', () => {
             const newUser = {
                 username: 'root',
                 name: 'Super User',
-                password: 'secretSecret',
+                password: 'SuperSecretPassword1!',
             }
 
             const result = await api
@@ -57,6 +57,86 @@ describe('when there is initially one user at db', () => {
 
             const usersAtEnd = await helper.usersInDb()
             expect(usersAtEnd).toHaveLength(usersAtStart.length)
+        })
+
+        test('Fails with proper statuscode and message if password is too short', async () => {
+            const newUser = {
+                username: 'shortPasswordUser',
+                name: 'Short Password',
+                password: 'Short1!',
+            }
+
+            const result = await api
+                .post('/api/users')
+                .send(newUser)
+                .expect(400)
+                .expect('Content-Type', /application\/json/)
+
+            expect(result.body.message).toContain('Password must be at least 8 characters long.')
+        })
+
+        test('Fails with proper statuscode and message if password has no uppercase letter', async () => {
+            const newUser = {
+                username: 'noUppercaseUser',
+                name: 'No Uppercase',
+                password: 'lowercase1!',
+            }
+
+            const result = await api
+                .post('/api/users')
+                .send(newUser)
+                .expect(400)
+                .expect('Content-Type', /application\/json/)
+
+            expect(result.body.message).toContain('Password must contain at least one uppercase letter.')
+        })
+
+        test('Fails with proper statuscode and message if password has no lowercase letter', async () => {
+            const newUser = {
+                username: 'noLowercaseUser',
+                name: 'No Lowercase',
+                password: 'UPPERCASE1!',
+            }
+
+            const result = await api
+                .post('/api/users')
+                .send(newUser)
+                .expect(400)
+                .expect('Content-Type', /application\/json/)
+
+            expect(result.body.message).toContain('Password must contain at least one lowercase letter.')
+        })
+
+        test('Fails with proper statuscode and message if password has no number', async () => {
+            const newUser = {
+                username: 'noNumberUser',
+                name: 'No Number',
+                password: 'NoNumber!',
+            }
+
+            const result = await api
+                .post('/api/users')
+                .send(newUser)
+                .expect(400)
+                .expect('Content-Type', /application\/json/)
+
+            expect(result.body.message).toContain('Password must contain at least one number.')
+        })
+
+        test('Fails with proper statuscode and message if password has no special character', async () => {
+            const newUser = {
+                username: 'noSpecialCharUser',
+                name: 'No Special Character',
+                password: 'NoSpecialChar1',
+            }
+
+            const result = await api
+                .post('/api/users')
+                .send(newUser)
+                .expect(400)
+                .expect('Content-Type', /application\/json/)
+
+            expect(result.body.message).toContain('Password must contain at least one special character.')
         })
     })
 
@@ -85,7 +165,7 @@ describe('when there is initially one user at db', () => {
                 .send(loginUser)
                 .expect(401)
                 .expect('Content-Type', /application\/json/)
-            
+
             expect(result.body.error).toContain('Invalid username or password')
         })
 
