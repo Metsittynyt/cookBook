@@ -1,39 +1,37 @@
 <template>
-    <div class="login_form">
-        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-        <div class="wrapper">
-            <div class="card-switch">
-                <label class="switch">
-                    <input type="checkbox" class="toggle" v-model="isSignUp">
-                    <span class="slider"></span>
-                    <span class="card-side"></span>
-                    <div class="flip-card__inner">
-                        <div class="flip-card__front">
-                            <div class="title">Log in</div>
-                            <form class="flip-card__form" @submit.prevent="submit">
-                                <input class="flip-card__input" name="username" placeholder="Username" type="text"
-                                    v-model="credentials.username" required>
-                                <input class="flip-card__input" name="password" placeholder="Password" type="password"
-                                    v-model="credentials.password" required>
-                                <button type="submit" class="flip-card__btn">Let`s go!</button>
-                            </form>
-                        </div>
-                        <div class="flip-card__back">
-                            <div class="title">Sign up</div>
-                            <form class="flip-card__form" @submit.prevent="submit">
-                                <input class="flip-card__input" placeholder="Name" type="text"
-                                    v-model="credentials.name" required>
-                                <input class="flip-card__input" name="username" placeholder="Username" type="text"
-                                    v-model="credentials.username" required>
-                                <input class="flip-card__input" name="password" placeholder="Password" type="password"
-                                    v-model="credentials.password" required>
-                                <input class="flip-card__input" name="passwordConfirm" placeholder="Confirm password"
-                                    type="password" v-model="passwordConfirm" required>
-                                <button type="submit" class="flip-card__btn">Confirm!</button>
-                            </form>
-                        </div>
-                    </div>
-                </label>
+    <ErrorMessage :message="errorMessage" />
+    <div class="login-form">
+        <label class="switch">
+            <input class="toggle" type="checkbox" @change="toggleFlip">
+            <span class="slider"></span>
+            <span class="card-side"></span>
+        </label>
+        <div class="flip-card">
+            <div class="flip-card-inner" ref="flipCardInner">
+                <div class="flip-card-front">
+                    <form class="flip-card__form" @submit.prevent="submit">
+                        <h2>Log in</h2>
+                        <input class="flip-card__input" name="username" placeholder="Username" type="text"
+                            v-model="credentials.username" required>
+                        <input class="flip-card__input" name="password" placeholder="Password" type="password"
+                            v-model="credentials.password" required>
+                        <button type="submit" class="flip-card__btn">Let`s go!</button>
+                    </form>
+                </div>
+                <div class="flip-card-back">
+                    <form class="flip-card__form" @submit.prevent="submit">
+                        <h2>Sign up</h2>
+                        <input class="flip-card__input" placeholder="Name" type="text" v-model="credentials.name"
+                            required>
+                        <input class="flip-card__input" name="username" placeholder="Username" type="text"
+                            v-model="credentials.username" required>
+                        <input class="flip-card__input" name="password" placeholder="Password" type="password"
+                            v-model="credentials.password" required>
+                        <input class="flip-card__input" name="passwordConfirm" placeholder="Confirm password"
+                            type="password" v-model="passwordConfirm" required>
+                        <button type="submit" class="flip-card__btn">Confirm!</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -41,9 +39,13 @@
 
 <script>
 import loginService from '../services/login';
+import ErrorMessage from '../components/ErrorMessage.vue'
 
 export default {
     name: 'LogInForm',
+    components: {
+        ErrorMessage
+    },
     data() {
         return {
             isSignUp: false,
@@ -57,8 +59,19 @@ export default {
         };
     },
     methods: {
+        toggleFlip(event) {
+            const flipCardInner = this.$refs.flipCardInner;
+            if (event.target.checked) {
+                flipCardInner.classList.add('flipped');
+            } else {
+                flipCardInner.classList.remove('flipped');
+            }
+        },
         async submit() {
             if (this.isSignUp) {
+                if (!this.validatePassword(this.credentials.password)) {
+                    return;
+                }
                 if (this.credentials.password !== this.passwordConfirm) {
                     this.errorMessage = 'Passwords do not match.';
                     return;
@@ -79,28 +92,59 @@ export default {
                     console.error('Login failed', error);
                 }
             }
+        },
+        validatePassword(password) {
+            const minLength = 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasNumbers = /[0-9]/.test(password);
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+            if (password.length < minLength) {
+                this.errorMessage = `Password must be at least ${minLength} characters long.`;
+                return false;
+            }
+            if (!hasUpperCase) {
+                this.errorMessage = 'Password must contain at least one uppercase letter.';
+                return false;
+            }
+            if (!hasLowerCase) {
+                this.errorMessage = 'Password must contain at least one lowercase letter.';
+                return false;
+            }
+            if (!hasNumbers) {
+                this.errorMessage = 'Password must contain at least one number.';
+                return false;
+            }
+            if (!hasSpecialChar) {
+                this.errorMessage = 'Password must contain at least one special character.';
+                return false;
+            }
+            return true;
         }
     }
 }
 </script>
 
-
-
 <style>
-.login_form {
-    min-height: 600px;
-    width: 100%;
-}
-
-.wrapper {
+.login-form {
+    min-width: 250px;
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 10px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    margin-top: 50px;
+    gap: 30px;
 }
 
-/* switch card */
 .switch {
+    --input-focus: #2d8cf0;
+    --font-color: #323232;
+    --font-color-sub: #666;
+    --bg-color: #fff;
+    --bg-color-alt: #666;
+    --main-color: #323232;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -109,12 +153,65 @@ export default {
     gap: 30px;
     width: 100px;
     height: 20px;
+    margin: auto;
+}
+
+.toggle {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 2px solid var(--main-color);
+    box-shadow: 4px 4px var(--main-color);
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--bg-colorcolor);
+    transition: 0.3s;
+}
+
+.slider:before {
+    box-sizing: border-box;
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    border: 2px solid var(--main-color);
+    border-radius: 5px;
+    left: -2px;
+    bottom: 2px;
+    background-color: var(--bg-color);
+    box-shadow: 0 3px 0 var(--main-color);
+    transition: 0.3s;
+}
+
+.toggle:checked+.slider {
+    background-color: var(--input-focus);
+}
+
+.toggle:checked+.slider:before {
+    transform: translateX(80px);
+}
+
+.toggle:checked~.card-side:before {
+    text-decoration: none;
+}
+
+.toggle:checked~.card-side:after {
+    text-decoration: underline;
 }
 
 .card-side {
-    font-size: 20px;
-    font-weight: bold;
-    color: black;
+    font-size: larger;
+    font-weight: 600;
+    color: var(--font-color);
 }
 
 .card-side::before {
@@ -135,93 +232,45 @@ export default {
     text-decoration: none;
 }
 
-.toggle {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    box-sizing: border-box;
-    border-radius: 5px;
-    border: 2px solid #006d77;
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #83C5BE;
-    transition: 0.3s;
-}
-
-.slider:before {
-    box-sizing: border-box;
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    border: 2px solid #006d77;
-    border-radius: 5px;
-    left: -2px;
-    bottom: 0px;
-    background-color: white;
-    transition: 0.3s;
-}
-
-.toggle:checked+.slider {
-    background-color: #83C5BE;
-}
-
-.toggle:checked+.slider:before {
-    transform: translateX(80px);
-}
-
-.toggle:checked~.card-side:before {
-    text-decoration: none;
-}
-
-.toggle:checked~.card-side:after {
-    text-decoration: underline;
-}
-
-/* card */
-
-.flip-card__inner {
-    width: 318px;
-    height: 350px;
-    position: relative;
+.flip-card {
+    display: flex;
     background-color: transparent;
+    width: 100%;
+    height: 400px;
     perspective: 1000px;
+    margin: 20px auto;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
     text-align: center;
     transition: transform 0.8s;
     transform-style: preserve-3d;
 }
 
-.toggle:checked~.flip-card__inner {
+.flip-card-inner.flipped {
     transform: rotateY(180deg);
 }
 
-.toggle:checked~.flip-card__front {
-    box-shadow: none;
-}
 
-.flip-card__front,
-.flip-card__back {
-    padding: 20px;
+.flip-card-front,
+.flip-card-back {
     position: absolute;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    background: #83C5BE;
-    gap: 20px;
+    width: 100%;
+    height: fit-content;
+    background-color: #83C5BE;
     border: 2px solid #006d77;
     box-shadow: 4px 4px #006d77;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.flip-card__back {
+.flip-card-back {
     transform: rotateY(180deg);
 }
 
@@ -230,14 +279,6 @@ export default {
     flex-direction: column;
     align-items: center;
     gap: 20px;
-}
-
-.title {
-    margin: 20px 0 20px 0;
-    font-size: 30px;
-    font-weight: 900;
-    text-align: center;
-    color: black;
 }
 
 .flip-card__input {
@@ -266,19 +307,5 @@ export default {
 .button-confirm:active {
     transform: translate(3px, 3px);
     box-shadow: none;
-}
-
-.flip-card__btn {
-    margin: 20px 0 20px 0;
-    width: 120px;
-    height: 40px;
-    border-radius: 5px;
-    border: 2px solid #006d77;
-    background-color: white;
-    font-size: 17px;
-    font-weight: 600;
-    color: black;
-    cursor: pointer;
-    box-shadow: 4px 4px#006d77;
 }
 </style>
