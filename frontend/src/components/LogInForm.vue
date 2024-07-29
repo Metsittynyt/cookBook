@@ -1,8 +1,8 @@
 <template>
-    <ErrorMessage :message="errorMessage" />
+    <MessageComponent v-if="message" :messageObject="message" />
     <div class="login-form">
         <label class="switch">
-            <input class="toggle" type="checkbox" @change="toggleFlip">
+            <input class="toggle" type="checkbox" @change="toggleFlip" v-model="isSignUp">
             <span class="slider"></span>
             <span class="card-side"></span>
         </label>
@@ -24,9 +24,12 @@
                         <h2>Sign up</h2>
                         <input class="flip-card__input" placeholder="Name" type="text" v-model="credentials.name"
                             required>
+                        <CredentialValidator :username="credentials.username" :type="'username'"
+                            @username-validity="setUsernameValidity" />
                         <input class="flip-card__input" name="username" placeholder="Username" type="text"
-                            v-model="credentials.username" required>
-                        <PasswordValidator :password="credentials.password" />
+                            v-model="credentials.username" @blur="checkUsername" required>
+                        <CredentialValidator :password="credentials.password" :type="'password'"
+                            @username-validity="setUsernameValidity" />
                         <input class="flip-card__input" name="password" placeholder="Password" type="password"
                             v-model="credentials.password" required>
                         <input class="flip-card__input" name="passwordConfirm" placeholder="Confirm password"
@@ -39,16 +42,18 @@
     </div>
 </template>
 
+
 <script>
 import loginService from '../services/login';
-import ErrorMessage from '../components/ErrorMessage.vue';
-import PasswordValidator from '../components/PasswordValidator.vue';
+import userService from '../services/users'
+import MessageComponent from '../components/MessageComponent.vue';
+import CredentialValidator from '../components/CredentialValidator.vue';
 
 export default {
     name: 'LogInForm',
     components: {
-        ErrorMessage,
-        PasswordValidator
+        MessageComponent,
+        CredentialValidator
     },
     data() {
         return {
@@ -59,59 +64,84 @@ export default {
                 password: ''
             },
             passwordConfirm: '',
-            errorMessage: ''
+            message: null,
+            messageType: null,
+            usernameValid: null // null = unchecked, true = valid, false = invalid
         };
     },
+    mounted() {
+        this.loadMessage();
+    },
     methods: {
+        setUsernameValidity(isValid) {
+            this.usernameValid = isValid;
+        },
+        async handleSignUp() {
+            if (!this.usernameValid) {
+                this.setMessage('Invalid username.', 'error');
+                return;
+            }
+            if (this.credentials.password !== this.passwordConfirm) {
+                this.setMessage('Passwords do not match.', 'error');
+                return;
+            }
+            try {
+                await userService.signUp(this.credentials);
+                localStorage.setItem('signupMessage', JSON.stringify({
+                    text: 'Sign up successful. Log into your new account.',
+                    type: 'success'
+                }));
+                window.location.reload();
+            } catch (error) {
+                this.setMessage('Failed to sign up. Please check your input.', 'error');
+                console.error('Signup failed', error);
+            }
+        },
+        async handleLogin() {
+            try {
+                await loginService.login(this.credentials);
+                this.$router.push('/cookbook').then(() => window.location.reload());
+            } catch (error) {
+                this.setMessage('Failed to login. Please check your credentials.', 'error');
+                console.error('Login failed', error);
+            }
+        },
+        loadMessage() {
+            const message = localStorage.getItem('signupMessage');
+            if (message) {
+                const messageObj = JSON.parse(message);
+                this.setMessage(messageObj.text, messageObj.type);
+                localStorage.removeItem('signupMessage');
+            }
+        },
+        setMessage(messageText, type) {
+            this.message = {
+                text: messageText,
+                type: type
+            };
+            setTimeout(() => {
+                this.clearMessage();
+            }, 5000);
+        },
+        clearMessage() {
+            this.message = null;
+        },
         toggleFlip(event) {
             const flipCardInner = this.$refs.flipCardInner;
             if (event.target.checked) {
                 flipCardInner.classList.add('flipped');
+                this.isSignUp = true;
             } else {
                 flipCardInner.classList.remove('flipped');
+                this.isSignUp = false;
             }
         },
         async submit() {
             if (this.isSignUp) {
-                if (!this.isPasswordValid) {
-                    return;
-                }
-                if (this.credentials.password !== this.passwordConfirm) {
-                    this.errorMessage = 'Passwords do not match.';
-                    return;
-                }
-                try {
-                    await loginService.signUp(this.credentials);
-                    this.$router.push('/cookbook').then(() => window.location.reload());
-                } catch (error) {
-                    this.errorMessage = 'Failed to sign up. Please check your input.';
-                    console.error('Signup failed', error);
-                }
+                await this.handleSignUp();
             } else {
-                try {
-                    await loginService.login(this.credentials);
-                    this.$router.push('/cookbook').then(() => window.location.reload());
-                } catch (error) {
-                    this.errorMessage = 'Failed to login. Please check your credentials.';
-                    console.error('Login failed', error);
-                }
+                await this.handleLogin();
             }
-        }
-    },
-    computed: {
-        passwordValidation() {
-            const password = this.credentials.password;
-            return {
-                length: password.length >= 8,
-                uppercase: /[A-Z]/.test(password),
-                lowercase: /[a-z]/.test(password),
-                number: /[0-9]/.test(password),
-                special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
-            };
-        },
-        get isPasswordValid() {
-            const validation = this.passwordValidation;
-            return validation.length && validation.uppercase && validation.lowercase && validation.number && validation.special;
         }
     }
 }
@@ -311,5 +341,10 @@ export default {
 .button-confirm:active {
     transform: translate(3px, 3px);
     box-shadow: none;
+}
+
+.fa-check::before,
+.fa-times::before {
+    margin-left: 10px
 }
 </style>
