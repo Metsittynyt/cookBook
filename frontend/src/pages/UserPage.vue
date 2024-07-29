@@ -11,6 +11,7 @@
 <script>
 import LogInForm from '../components/LogInForm'
 import loginService from '@/services/login'
+import userService from '../services/users'
 
 export default {
   name: 'UserPage',
@@ -39,7 +40,7 @@ export default {
   methods: {
     async getName() {
       if (this.isLoggedIn) {
-        this.username = await loginService.getUsername()
+        this.username = await userService.getUsername()
       }
     },
     async logout() {

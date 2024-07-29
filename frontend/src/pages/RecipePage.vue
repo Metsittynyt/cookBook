@@ -49,7 +49,7 @@
 
 <script>
 import recipeService from '@/services/recipes';
-import loginService from '@/services/login';
+import userService from '../services/users'
 
 export default {
     name: 'RecipePage',
@@ -85,7 +85,7 @@ export default {
         },
         async getName() {
             console.log(this.recipe.user)
-            const response = await loginService.getById(this.recipe.user);
+            const response = await userService.getById(this.recipe.user);
             this.username = response.username;
 
         },
