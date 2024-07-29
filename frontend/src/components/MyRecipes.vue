@@ -1,6 +1,7 @@
 <template>
   <div>
     <h2>My Recipes</h2>
+    <p v-if="recipes.length <= 0">Your own recipes will appear here. Start by clicking the button above!</p>
     <div v-if="error" class="error-message">{{ error }}</div>
     <div class="RecipesList">
       <div v-for="recipe in recipes" :key="recipe.id" class="recipe-list-item">
