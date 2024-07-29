@@ -6,7 +6,7 @@
             <span class="slider"></span>
             <span class="card-side"></span>
         </label>
-        <div class="flip-card">
+        <div class="flip-card" :style="{ height: flipCardHeight }">
             <div class="flip-card-inner" ref="flipCardInner">
                 <div class="recipeTop"></div>
                 <div class="flip-card-front">
@@ -24,14 +24,14 @@
                         <h2>Sign up</h2>
                         <input class="flip-card__input" placeholder="Name" type="text" v-model="credentials.name"
                             required>
-                        <CredentialValidator :username="credentials.username" :type="'username'"
-                            @username-validity="setUsernameValidity" />
                         <input class="flip-card__input" name="username" placeholder="Username" type="text"
                             v-model="credentials.username" @blur="checkUsername" required>
-                        <CredentialValidator :password="credentials.password" :type="'password'"
+                        <CredentialValidator :username="credentials.username" :type="'username'"
                             @username-validity="setUsernameValidity" />
                         <input class="flip-card__input" name="password" placeholder="Password" type="password"
                             v-model="credentials.password" required>
+                        <CredentialValidator :password="credentials.password" :type="'password'"
+                            @username-validity="setUsernameValidity" />
                         <input class="flip-card__input" name="passwordConfirm" placeholder="Confirm password"
                             type="password" v-model="passwordConfirm" required>
                         <button type="submit" class="flip-card__btn">Confirm!</button>
@@ -66,7 +66,8 @@ export default {
             passwordConfirm: '',
             message: null,
             messageType: null,
-            usernameValid: null // null = unchecked, true = valid, false = invalid
+            usernameValid: null, // null = unchecked, true = valid, false = invalid
+            flipCardHeight: '400px' // Default height for login
         };
     },
     mounted() {
@@ -131,9 +132,11 @@ export default {
             if (event.target.checked) {
                 flipCardInner.classList.add('flipped');
                 this.isSignUp = true;
+                this.flipCardHeight = '550px';
             } else {
                 flipCardInner.classList.remove('flipped');
                 this.isSignUp = false;
+                this.flipCardHeight = '400px';
             }
         },
         async submit() {
@@ -244,10 +247,11 @@ export default {
     display: flex;
     background-color: transparent;
     width: 100%;
-    height: 450px;
+    height: 400px;
     perspective: 1000px;
     margin: 0px -1px 0px -1px;
     box-sizing: border-box;
+    transition: height 0.3s ease-in-out;
 }
 
 .flip-card-inner {
