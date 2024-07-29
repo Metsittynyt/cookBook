@@ -31,7 +31,13 @@ usersRouter.get('/:id', async (request, response) => {
     }
 });
 
-usersRouter.post('/',passwordValidator, async (request, response) => {
+usersRouter.get('/check-username/:username', async (req, res) => {
+    const { username } = req.params;
+    const user = await User.findOne({ username });
+    res.json({ isUnique: !user });
+});
+
+usersRouter.post('/', passwordValidator, async (request, response) => {
     const { username, name, password } = request.body
 
     const saltRounds = 10
