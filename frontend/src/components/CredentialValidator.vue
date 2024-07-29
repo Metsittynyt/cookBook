@@ -99,6 +99,7 @@ export default {
 <style>
 .requirements {
     margin: none;
+    margin-bottom: 10px;
 }
 
 .requirements .requirement {
